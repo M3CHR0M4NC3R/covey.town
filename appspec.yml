@@ -1,0 +1,23 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/html/
+hooks:
+  BeforeInstall:
+    - location: aws_scripts/install_dependencies
+      timeout: 300
+      runas: root
+    - location: aws_scripts/start_server_backend
+      timeout: 300
+      runas: root
+    - location: aws_scripts/start_server_frontend
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: aws_scripts/stop_server_backend
+      timeout: 300
+      runas: root
+    - location: aws_scripts/stop_server_frontend
+      timeout: 300
+      runas: root
