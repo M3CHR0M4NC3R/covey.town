@@ -1,5 +1,4 @@
 #!/bin/bash
-cd /
 cd frontend
 npm install
 npm start
