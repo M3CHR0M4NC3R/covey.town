@@ -643,6 +643,12 @@
                  "height":110.666666666667,
                  "id":54,
                  "name":"Music Creation",
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"Music"
+                        }],
                  "rotation":0,
                  "type":"GameArea",
                  "visible":true,
@@ -654,6 +660,12 @@
                  "height":98,
                  "id":59,
                  "name":"Music Play",
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"Music"
+                        }],
                  "rotation":0,
                  "type":"GameArea",
                  "visible":true,
