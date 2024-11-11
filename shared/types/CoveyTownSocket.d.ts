@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'MusicArea' | 'TicTacToeArea' | 'ConnectFourArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -139,6 +139,12 @@ export interface ConnectFourGameState extends WinnableGameState {
   firstPlayer: ConnectFourColor;
 }
 
+export interface MusicGameState extends WinnableGameState {
+  id?: PlayerID;
+  songName?: string;
+  songID?: string;
+}
+
 /**
  * Type for a move in ConnectFour
  * Columns are numbered 0-6, with 0 being the leftmost column
@@ -216,7 +222,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | StartGameCommand | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<MusicMove> | StartGameCommand | LeaveGameCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
