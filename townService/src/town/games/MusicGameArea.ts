@@ -27,24 +27,6 @@ export default class MusicGameArea extends GameArea<MusicGame> {
   }
 
   private _stateUpdated(updatedState: GameInstance<MusicGameState>) {
-    if (updatedState.state.status === 'OVER') {
-      // If we haven't yet recorded the outcome, do so now.
-      const gameID = this._game?.id;
-      if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
-        const { x, o } = updatedState.state;
-        if (x && o) {
-          const xName = this._occupants.find(eachPlayer => eachPlayer.id === x)?.userName || x;
-          const oName = this._occupants.find(eachPlayer => eachPlayer.id === o)?.userName || o;
-          this._history.push({
-            gameID,
-            scores: {
-              [xName]: updatedState.state.winner === x ? 1 : 0,
-              [oName]: updatedState.state.winner === o ? 1 : 0,
-            },
-          });
-        }
-      }
-    }
     this._emitAreaChanged();
   }
 
@@ -82,15 +64,6 @@ export default class MusicGameArea extends GameArea<MusicGame> {
       if (this._game?.id !== command.gameID) {
         throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
       }
-      assert(
-        command.move.gamePiece === 'X' || command.move.gamePiece === 'O',
-        'Invalid game piece',
-      );
-      game.applyMove({
-        gameID: command.gameID,
-        playerID: player.id,
-        move: command.move,
-      });
       this._stateUpdated(game.toModel());
       return undefined as InteractableCommandReturnType<CommandType>;
     }
@@ -98,7 +71,7 @@ export default class MusicGameArea extends GameArea<MusicGame> {
       let game = this._game;
       if (!game || game.state.status === 'OVER') {
         // No game in progress, make a new one
-        game = new TicTacToeGame();
+        game = new MusicGame();
         this._game = game;
       }
       game.join(player);

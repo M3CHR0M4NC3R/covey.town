@@ -109,6 +109,12 @@ export interface TicTacToeMove {
   col: TicTacToeGridPosition;
 }
 
+export interface MusicMove {
+  gamePiece: 'X' | 'O';
+  row: TicTacToeGridPosition;
+  col: TicTacToeGridPosition;
+}
+
 /**
  * Type for the state of a TicTacToe game
  * The state of the game is represented as a list of moves, and the playerIDs of the players (x and o)
