@@ -1,142 +1,194 @@
 import { Button, Container, List, ListItem, useToast } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import MusicController from '../../../../classes/interactable/MusicAreaController';
+import React, { useEffect, useState, useRef } from 'react';
+import TicTacToeAreaController from '../../../../classes/interactable/TicTacToeAreaController';
 import PlayerController from '../../../../classes/PlayerController';
 import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
-import MusicBoard from './MusicBoard';
+import * as Tone from 'tone'; // Import Tone.js
+import { GameObjects } from 'phaser';
 
-/**
- * The TicTacToeArea component renders the TicTacToe game area.
- * It renders the current state of the area, optionally allowing the player to join the game.
- *
- * It uses Chakra-UI components (does not use other GUI widgets)
- *
- * It uses the TicTacToeAreaController to get the current state of the game.
- * It listens for the 'gameUpdated' and 'gameEnd' events on the controller, and re-renders accordingly.
- * It subscribes to these events when the component mounts, and unsubscribes when the component unmounts. It also unsubscribes when the gameAreaController changes.
- *
- * It renders the following:
- * - A list of players' usernames (in a list with the aria-label 'list of players in the game', one item for X and one for O)
- *    - If there is no player in the game, the username is '(No player yet!)'
- *    - List the players as (exactly) `X: ${username}` and `O: ${username}`
- * - A message indicating the current game status:
- *    - If the game is in progress, the message is 'Game in progress, {moveCount} moves in, currently {whoseTurn}'s turn'. If it is currently our player's turn, the message is 'Game in progress, {moveCount} moves in, currently your turn'
- *    - Otherwise the message is 'Game {not yet started | over}.'
- * - If the game is in status WAITING_TO_START or OVER, a button to join the game is displayed, with the text 'Join New Game'
- *    - Clicking the button calls the joinGame method on the gameAreaController
- *    - Before calling joinGame method, the button is disabled and has the property isLoading set to true, and is re-enabled when the method call completes
- *    - If the method call fails, a toast is displayed with the error message as the description of the toast (and status 'error')
- *    - Once the player joins the game, the button dissapears
- * - The TicTacToeBoard component, which is passed the current gameAreaController as a prop (@see TicTacToeBoard.tsx)
- *
- * - When the game ends, a toast is displayed with the result of the game:
- *    - Tie: description 'Game ended in a tie'
- *    - Our player won: description 'You won!'
- *    - Our player lost: description 'You lost :('
- *
- */
 export default function MusicArea({
   interactableID,
 }: {
   interactableID: InteractableID;
 }): JSX.Element {
-  const gameAreaController = useInteractableAreaController<MusicController>(interactableID);
-  const townController = useTownController();
+  // UI Elements
+  const mixerRef = useRef<HTMLDivElement>(null);
+  const playButton = useRef<HTMLButtonElement>(null);
 
-  const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
-  const [moveCount, setMoveCount] = useState<number>(gameAreaController.moveCount);
-  const [joiningGame, setJoiningGame] = useState(false);
-  const [x, setX] = useState<PlayerController | undefined>(gameAreaController.x);
-  const [o, setO] = useState<PlayerController | undefined>(gameAreaController.o);
-  const toast = useToast();
+  const [key, setKey] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [started, setStarted] = useState(false);
+  let beat = 0;
+
+  //Creates all the Synth Players 4 normal; 1 Drum; 1 Cymbol
+  const synthPlayerArray: any[] = [];
+  for (let i = 0; i < 4; i++) {
+    const synth = new Tone.Synth({
+      oscillator: {
+        type: 'square8',
+      },
+    }).toDestination();
+    synthPlayerArray.push(synth);
+  }
+  const cymbol = new Tone.MetalSynth({}).toDestination();
+  synthPlayerArray.push(cymbol);
+  const drum = new Tone.NoiseSynth().toDestination();
+  synthPlayerArray.push(drum);
+
+  //Creating the Board (2D array) each row has the same instrument and a playNote property
+  const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
+  const board: { note: string; playNote: boolean }[][] = [];
+  for (const note of notes) {
+    const row = [];
+    console.log('NOTE TEST: ' + note);
+    for (let i = 0; i < 16; i++) {
+      row.push({
+        note: note,
+        playNote: false,
+      });
+    }
+    board.push(row);
+  }
+
+  // configLoop continually looks through the board going checking the beat index in each row
+  // If playnote is true the note should play
+  // The beats per minute is 120, using 16n as the timescale
+  const configLoop = () => {
+    const repeat = (time: number) => {
+      board.forEach((row, index) => {
+        /* console.log(
+          ' Beat: ' +
+            beat +
+            ' index: ' +
+            index +
+            ' SYNTH: ' +
+            synthObjArray[index] +
+            ' SoundNOTE: ' +
+            row[beat].note +
+            ' SoundStatus: ' +
+            row[beat].playNote,
+        ); */
+        const synth = synthPlayerArray[index];
+        const sound = row[beat];
+        if (sound.playNote) {
+          //console.log('Playing Sound: ' + sound.note);
+          if (sound.note == 'Cymbol' || sound.note == 'Drum') {
+            synth.triggerAttackRelease('16n');
+          } else {
+            synth.triggerAttackRelease(sound.note, '16n', time);
+          }
+        }
+      });
+      beat = (beat + 1) % 16;
+    };
+    Tone.Transport.bpm.value = 120;
+    Tone.Transport.scheduleRepeat(repeat, '16n');
+  };
+
+  //On note click it should flip the playNote status to either disable the sound or enable it
+  //The button should visually change indicating the status via the active class
+  const handleNoteClick = (clickedRowIndex: number, clickedNoteIndex: number, e: any) => {
+    board[clickedRowIndex][clickedNoteIndex].playNote =
+      !board[clickedRowIndex][clickedNoteIndex].playNote;
+    e.target.classList.toggle('active');
+  };
+
+  //This creates the actaully array of 6 x 16 notes along with what sound they play
+  const makeInteractableMixer = () => {
+    const mixer = mixerRef.current;
+    if (!mixer) return;
+
+    board.forEach((row, rowIndex) => {
+      const mixerRow = document.createElement('div');
+      mixerRow.className = 'mixer-row';
+      mixerRow.style.display = 'flex';
+
+      row.forEach((note, noteIndex) => {
+        const button = document.createElement('button');
+        button.className = 'note';
+        button.textContent = `${note.note}\n${noteIndex + 1}`;
+        button.addEventListener('click', e => handleNoteClick(rowIndex, noteIndex, e));
+        mixerRow.appendChild(button);
+      });
+      mixer.appendChild(mixerRow);
+    });
+  };
+
+  //Initializes the play button
+  //if the element cannot be found return
+  //If the element is found attach a listner to check for a click
+  //On click start the audio transport, set started to true, and flip the current playing status
+  const configPlayButton = () => {
+    if (!playButton.current) return;
+
+    playButton.current.addEventListener('click', async () => {
+      if (!started) {
+        //console.log('Before await');
+        await Tone.start();
+        //console.log('Await Successful');
+        Tone.getDestination().volume.rampTo(-10, 0.001);
+        configLoop();
+        setStarted(true);
+        //console.log('STARTED !LEAVING! LISTENER: ' + started);
+      }
+
+      setPlaying(prevPlaying => !prevPlaying);
+    });
+  };
+
+  //Upon activation create the mixerboard and ready the Tone.js loop
+  useEffect(() => {
+    //console.log('REMOUNT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    makeInteractableMixer();
+    configPlayButton();
+    return () => {
+      Tone.Transport.stop();
+      Tone.Transport.cancel();
+      setKey(key + 1); // Update key to force remount
+    };
+  }, [key]);
 
   useEffect(() => {
-    const updateGameState = () => {
-      setGameStatus(gameAreaController.status || 'WAITING_TO_START');
-      setMoveCount(gameAreaController.moveCount || 0);
-      setX(gameAreaController.x);
-      setO(gameAreaController.o);
-    };
-    gameAreaController.addListener('gameUpdated', updateGameState);
-    const onGameEnd = () => {
-      const winner = gameAreaController.winner;
-      if (!winner) {
-        toast({
-          title: 'Game over',
-          description: 'Game ended in a tie',
-          status: 'info',
-        });
-      } else if (winner === townController.ourPlayer) {
-        toast({
-          title: 'Game over',
-          description: 'You won!',
-          status: 'success',
-        });
-      } else {
-        toast({
-          title: 'Game over',
-          description: `You lost :(`,
-          status: 'error',
-        });
-      }
-    };
-    gameAreaController.addListener('gameEnd', onGameEnd);
-    return () => {
-      gameAreaController.removeListener('gameEnd', onGameEnd);
-      gameAreaController.removeListener('gameUpdated', updateGameState);
-    };
-  }, [townController, gameAreaController, toast]);
-
-  let gameStatusText = <></>;
-  if (gameStatus === 'IN_PROGRESS') {
-    gameStatusText = (
-      <>
-        Game in progress, {moveCount} moves in, currently{' '}
-        {gameAreaController.whoseTurn === townController.ourPlayer
-          ? 'your'
-          : gameAreaController.whoseTurn?.userName + "'s"}{' '}
-        turn
-      </>
-    );
-  } else {
-    let joinGameButton = <></>;
-    if (
-      (gameAreaController.status === 'WAITING_TO_START' && !gameAreaController.isPlayer) ||
-      gameAreaController.status === 'OVER'
-    ) {
-      joinGameButton = (
-        <Button
-          onClick={async () => {
-            setJoiningGame(true);
-            try {
-              await gameAreaController.joinGame();
-            } catch (err) {
-              toast({
-                title: 'Error joining game',
-                description: (err as Error).toString(),
-                status: 'error',
-              });
-            }
-            setJoiningGame(false);
-          }}
-          isLoading={joiningGame}
-          disabled={joiningGame}>
-          Join New Game
-        </Button>
-      );
+    if (playing) {
+      Tone.Transport.start();
+    } else {
+      Tone.Transport.stop();
+      Tone.Transport.cancel();
+      beat = 0;
     }
-    gameStatusText = (
-      <b>
-        Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}. {joinGameButton}
-      </b>
-    );
-  }
+  }, [playing]);
+
+  /*_______________________________________________________________________*/
 
   return (
     <Container>
-      <>Render will go here</>
+      <div
+        ref={mixerRef}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gridTemplateColumns: 'repeat(8, 1fr)',
+          gap: '10px',
+        }}
+      />
+      <button ref={playButton}>{playing ? 'STOP' : 'PLAY'}</button>
+      <style>
+        {`
+          .note {
+            width: 80px;
+            height: 40px;
+            background-color: lightgray;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            font-size: 12px;
+          }
+          .note.active {
+            background-color: lightgreen;
+          }
+        `}
+      </style>
     </Container>
   );
 }
