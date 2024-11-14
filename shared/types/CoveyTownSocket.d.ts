@@ -109,6 +109,7 @@ export interface TicTacToeMove {
   col: TicTacToeGridPosition;
 }
 
+/* Music was based off of TicTacToe's foundwork. Needs to be compiled by Covey.town */
 export interface MusicMove {
   gamePiece: 'X' | 'O';
   row: TicTacToeGridPosition;
