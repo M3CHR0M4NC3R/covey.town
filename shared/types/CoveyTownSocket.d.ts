@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'ConnectFourArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'MusicArea' | 'TicTacToeArea' | 'ConnectFourArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -109,6 +109,13 @@ export interface TicTacToeMove {
   col: TicTacToeGridPosition;
 }
 
+/* Music was based off of TicTacToe's foundwork. Needs to be compiled by Covey.town */
+export interface MusicMove {
+  gamePiece: 'X' | 'O';
+  row: TicTacToeGridPosition;
+  col: TicTacToeGridPosition;
+}
+
 /**
  * Type for the state of a TicTacToe game
  * The state of the game is represented as a list of moves, and the playerIDs of the players (x and o)
@@ -137,6 +144,12 @@ export interface ConnectFourGameState extends WinnableGameState {
   yellowReady?: boolean;
   // The color of the player who will make the first move
   firstPlayer: ConnectFourColor;
+}
+
+export interface MusicGameState extends WinnableGameState {
+  id?: PlayerID;
+  songName?: string;
+  songID?: string;
 }
 
 /**
@@ -216,7 +229,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | StartGameCommand | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | GameMoveCommand<ConnectFourMove> | GameMoveCommand<MusicMove> | StartGameCommand | LeaveGameCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;

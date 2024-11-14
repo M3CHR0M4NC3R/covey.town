@@ -3,6 +3,7 @@ import { BoundingBox, TownEmitter } from '../../types/CoveyTownSocket';
 import InteractableArea from '../InteractableArea';
 import ConnectFourGameArea from './ConnectFourGameArea';
 import TicTacToeGameArea from './TicTacToeGameArea';
+import MusicGameArea from './MusicGameArea';
 
 /**
  * Creates a new GameArea from a map object
@@ -23,6 +24,9 @@ export default function GameAreaFactory(
   const gameType = mapObject.properties?.find(prop => prop.name === 'type')?.value;
   if (gameType === 'TicTacToe') {
     return new TicTacToeGameArea(name, rect, broadcastEmitter);
+  }
+  if (gameType === 'Music') {
+    return new MusicGameArea(name, rect, broadcastEmitter);
   }
   if (gameType === 'ConnectFour') {
     return new ConnectFourGameArea(name, rect, broadcastEmitter);

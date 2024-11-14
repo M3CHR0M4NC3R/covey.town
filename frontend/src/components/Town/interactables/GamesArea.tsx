@@ -27,6 +27,7 @@ import ConnectFourArea from './ConnectFour/ConnectFourArea';
 import GameAreaInteractable from './GameArea';
 import Leaderboard from './Leaderboard';
 import TicTacToeArea from './TicTacToe/TicTacToeArea';
+import MusicArea from './Music/MusicArea';
 
 export const INVALID_GAME_AREA_TYPE_MESSAGE = 'Invalid game area type';
 
@@ -62,62 +63,79 @@ function GameArea({ interactableID }: { interactableID: InteractableID }): JSX.E
   }, [townController, gameAreaController]);
   return (
     <>
-      <Accordion allowToggle>
-        <AccordionItem>
-          <Heading as='h3'>
-            <AccordionButton>
-              <Box flex='1' textAlign='left'>
-                Leaderboard
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-            <AccordionPanel>
-              <Leaderboard results={history} />
-            </AccordionPanel>
-          </Heading>
-        </AccordionItem>
-        <AccordionItem>
-          <Heading as='h3'>
-            <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
-                Current Observers
+      {/* conditional render only if it's not our Music Creation, for some reason this is hardset by default */}
+      {gameAreaController.toInteractableAreaModel().id !== 'Music Creation' && (
+        <Accordion allowToggle>
+          <AccordionItem>
+            <Heading as='h3'>
+              <AccordionButton>
+                <Box flex='1' textAlign='left'>
+                  Leaderboard
+                </Box>
                 <AccordionIcon />
-              </Box>
-            </AccordionButton>
-          </Heading>
-          <AccordionPanel>
-            <List aria-label='list of observers in the game'>
-              {observers.map(player => {
-                return <ListItem key={player.id}>{player.userName}</ListItem>;
-              })}
-            </List>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
+              </AccordionButton>
+              <AccordionPanel>
+                <Leaderboard results={history} />
+              </AccordionPanel>
+            </Heading>
+          </AccordionItem>
+          <AccordionItem>
+            <Heading as='h3'>
+              <AccordionButton>
+                <Box as='span' flex='1' textAlign='left'>
+                  Current Observers
+                  <AccordionIcon />
+                </Box>
+              </AccordionButton>
+            </Heading>
+            <AccordionPanel>
+              <List aria-label='list of observers in the game'>
+                {observers.map(player => {
+                  return <ListItem key={player.id}>{player.userName}</ListItem>;
+                })}
+              </List>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      )}
       <Flex>
         <Box>
-          {gameAreaController.toInteractableAreaModel().type === 'ConnectFourArea' ? (
-            <ConnectFourArea interactableID={interactableID} />
-          ) : gameAreaController.toInteractableAreaModel().type === 'TicTacToeArea' ? (
-            <TicTacToeArea interactableID={interactableID} />
-          ) : (
-            <>{INVALID_GAME_AREA_TYPE_MESSAGE}</>
-          )}
+          {(() => {
+            let type = gameAreaController.toInteractableAreaModel().type;
+            // TODO: Figure out how to get "type" to be MusicArea without it being hard forced by this if statement.
+            if (gameAreaController.toInteractableAreaModel().id == 'Music Creation') {
+              type = 'MusicArea';
+            }
+            console.log('Current game area type:', type); // Debugging line
+            switch (type) {
+              case 'ConnectFourArea':
+                return <ConnectFourArea interactableID={interactableID} />;
+              case 'TicTacToeArea':
+                return <TicTacToeArea interactableID={interactableID} />;
+              case 'MusicArea':
+                return <MusicArea interactableID={interactableID} />;
+              default:
+                return <>{INVALID_GAME_AREA_TYPE_MESSAGE}</>;
+            }
+          })()}
         </Box>
-        <Box
-          style={{
-            height: '400px',
-            overflowY: 'scroll',
-          }}>
-          <div
+        {/* conditional render only if it's not our Music Creation, We don't need the chat feature but the other apps do*/}
+        {gameAreaController.toInteractableAreaModel().id !== 'Music Creation' && (
+          <Box
             style={{
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
+              height: '400px',
+              overflowY: 'scroll',
             }}>
-            <ChatChannel interactableID={gameAreaController.id} />
-          </div>
-        </Box>
+            <div
+              style={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+              }}>
+              <ChatChannel interactableID={gameAreaController.id} />
+            </div>
+          </Box>
+        )}
       </Flex>
     </>
   );

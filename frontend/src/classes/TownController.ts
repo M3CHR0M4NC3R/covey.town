@@ -30,6 +30,7 @@ import {
 import {
   isConnectFourArea,
   isConversationArea,
+  isMusicArea,
   isTicTacToeArea,
   isViewingArea,
 } from '../types/TypeUtils';
@@ -41,6 +42,7 @@ import InteractableAreaController, {
   GenericInteractableAreaController,
 } from './interactable/InteractableAreaController';
 import TicTacToeAreaController from './interactable/TicTacToeAreaController';
+import MusicAreaController from './interactable/MusicAreaController';
 import ViewingAreaController from './interactable/ViewingAreaController';
 import PlayerController from './PlayerController';
 
@@ -626,6 +628,10 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
           } else if (isTicTacToeArea(eachInteractable)) {
             this._interactableControllers.push(
               new TicTacToeAreaController(eachInteractable.id, eachInteractable, this),
+            );
+          } else if (isMusicArea(eachInteractable)) {
+            this._interactableControllers.push(
+              new MusicAreaController(eachInteractable.id, eachInteractable, this),
             );
           } else if (isConnectFourArea(eachInteractable)) {
             this._interactableControllers.push(
