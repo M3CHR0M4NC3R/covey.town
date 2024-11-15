@@ -16,6 +16,7 @@ export default function MusicArea({
   // UI Elements
   const mixerRef = useRef<HTMLDivElement>(null);
   const playButton = useRef<HTMLButtonElement>(null);
+  const synthPlayerArray = useRef<(Tone.Synth | Tone.MetalSynth | Tone.NoiseSynth)[]>([]);
 
   const [key, setKey] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -23,20 +24,23 @@ export default function MusicArea({
   let beat = 0;
 
   //Creates all the Synth Players 4 normal; 1 Drum; 1 Cymbol
-  console.log('CREATING NEW SYNiTHS?');
-  const synthPlayerArray: any[] = [];
-  for (let i = 0; i < 4; i++) {
-    const synth = new Tone.Synth({
-      oscillator: {
-        type: 'square8',
-      },
-    }).toDestination();
-    synthPlayerArray.push(synth);
-  }
-  const cymbol = new Tone.MetalSynth({}).toDestination();
-  synthPlayerArray.push(cymbol);
-  const drum = new Tone.NoiseSynth().toDestination();
-  synthPlayerArray.push(drum);
+  //Only want to create the players once to prevent the audio break after multiple starts and stops
+  useEffect(() => {
+    if (synthPlayerArray.current.length === 0) {
+      for (let i = 0; i < 4; i++) {
+        const synth = new Tone.Synth({
+          oscillator: {
+            type: 'square8',
+          },
+        }).toDestination();
+        synthPlayerArray.current.push(synth);
+      }
+      const cymbol = new Tone.MetalSynth({}).toDestination();
+      synthPlayerArray.current.push(cymbol);
+      const drum = new Tone.NoiseSynth().toDestination();
+      synthPlayerArray.current.push(drum);
+    }
+  }, []);
 
   //Creating the Board (2D array) each row has the same instrument and a playNote property
   const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
@@ -71,12 +75,12 @@ export default function MusicArea({
             ' SoundStatus: ' +
             row[beat].playNote,
         ); */
-        const synth = synthPlayerArray[index];
+        const synth = synthPlayerArray.current[index];
         const sound = row[beat];
         if (sound.playNote) {
-          //console.log('Playing Sound: ' + sound.note);
+          console.log('Playing Sound: ' + sound.note);
           if (sound.note == 'Cymbol' || sound.note == 'Drum') {
-            synth.triggerAttackRelease('16n');
+            synth.triggerAttackRelease('16n', time);
           } else {
             synth.triggerAttackRelease(sound.note, '16n', time);
           }
@@ -98,6 +102,7 @@ export default function MusicArea({
 
   //This creates the actaully array of 6 x 16 notes along with what sound they play
   const makeInteractableMixer = () => {
+    console.log('MAKE INTERACTABLE MIUXER');
     const mixer = mixerRef.current;
     if (!mixer) return;
 
