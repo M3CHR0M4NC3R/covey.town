@@ -184,11 +184,12 @@ export default function MusicArea({
         {`
           .note {
             width: 80px;
-            height: 40px;
+            height: 60px;
             background-color: lightgray;
             border: 1px solid #ccc;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 65%;
+            word-break: break-word;
           }
           .note.active {
             background-color: lightgreen;
