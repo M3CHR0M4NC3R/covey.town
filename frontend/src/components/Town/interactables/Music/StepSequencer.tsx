@@ -186,7 +186,7 @@ export default function MusicArea({
             width: 80px;
             height: 60px;
             background-color: lightgray;
-            border: 1px solid #ccc;
+            outline: 1px solid #ccc;
             cursor: pointer;
             font-size: 65%;
             word-break: break-word;
