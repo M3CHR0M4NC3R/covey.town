@@ -15,7 +15,7 @@ export interface Song {
   creator: string;
   description: string;
   likes: number;
-  notes: { note: string; playNote: boolean }[];
+  notes: { note: string; playNote: boolean }[][];
 }
 
 export default function MusicArea({

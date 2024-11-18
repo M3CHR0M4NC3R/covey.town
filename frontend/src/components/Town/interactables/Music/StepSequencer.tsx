@@ -58,6 +58,9 @@ export default function MusicArea({
   for (const note of notes) {
     const row = [];
     console.log('NOTE TEST: ' + note);
+    if (currSong !== null) {
+      console.log(currSong);
+    }
     for (let i = 0; i < 16; i++) {
       row.push({
         note: note,
@@ -65,6 +68,7 @@ export default function MusicArea({
       });
     }
     board.push(row);
+    console.log(board);
   }
 
   // configLoop continually looks through the board going checking the beat index in each row

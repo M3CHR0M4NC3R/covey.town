@@ -48,42 +48,42 @@ export default function MusicArea({
         'creator': 'WWahr4TzizNmctFb-fW5F', 
         'description': 'Lorem, ipsum dolor.',
         'likes': 0,
-        'notes': fakeNotes0,
+        'notes': [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
     const fakeSong1 = {
         'title': 'Song title 1 (5words) - Lorem ipsum dolor sit amet.',
         'creator': 'WWahr4TzizNmctFb-fW5F', 
         'description': 'Lorem ipsum dolor sit amet.',
         'likes': 0,
-        'notes': fakeNotes1,
+        'notes': [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
     const fakeSong2 = {
         'title': 'Song title 2 (10words) - Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe, a.',
         'creator': 'WWahr4TzizNmctFb-fW5F', 
         'description': 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe, a.',
         'likes': 0,
-        'notes': fakeNotes2,
+        'notes': [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
     const fakeSong3 = {
         'title': 'Song title 3 (25 words) - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Soluta nobis molestiae totam dolor, quod blanditiis deserunt suscipit et. Voluptate alias ratione possimus rerum facilis consequuntur.',
         'creator': 'WWahr4TzizNmctFb-fW5F', 
         'description': 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Soluta nobis molestiae totam dolor, quod blanditiis deserunt suscipit et. Voluptate alias ratione possimus rerum facilis consequuntur.',
         'likes': 0,
-        'notes': fakeNotes3,
+        'notes': [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
     const fakeSong4 = {
         'title': 'Song title 4 (50 words) - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex, sit. Fugit praesentium cum assumenda! Ea consequuntur delectus alias, sit nihil beatae quos eum minima culpa repellat est exercitationem cum a quae reiciendis itaque aliquam sequi porro animi dicta maiores impedit? Animi magnam adipisci fugit eaque. Nobis quidem ullam numquam harum.',
         'creator': 'WWahr4TzizNmctFb-fW5F', 
         'description': 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex, sit. Fugit praesentium cum assumenda! Ea consequuntur delectus alias, sit nihil beatae quos eum minima culpa repellat est exercitationem cum a quae reiciendis itaque aliquam sequi porro animi dicta maiores impedit? Animi magnam adipisci fugit eaque. Nobis quidem ullam numquam harum.',
         'likes': 0,
-        'notes': fakeNotes4,
+        'notes': [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
     const fakeSong5 = {
         'title': 'Song title 5 (100 words) - Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aperiam sed ullam dolorum aut totam qui natus modi alias quisquam praesentium, error dolores, ab, a eligendi. Veritatis, natus facere, dignissimos cupiditate facilis voluptas aliquam minus temporibus laudantium rem blanditiis ut itaque, sunt officia? Enim et eius expedita nemo nobis! Earum iusto voluptate autem nulla rerum laborum facere amet porro eaque, exercitationem quo totam officia accusamus! Saepe doloremque quae beatae ipsum voluptates similique velit aspernatur veniam eum corporis architecto, eligendi eius harum quas corrupti quos placeat quam voluptatum cumque perspiciatis rerum vitae. Molestiae nesciunt incidunt nihil voluptatibus nam cum, consequuntur rerum minima?',
         'creator': 'WWahr4TzizNmctFb-fW5F', 
         'description': 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aperiam sed ullam dolorum aut totam qui natus modi alias quisquam praesentium, error dolores, ab, a eligendi. Veritatis, natus facere, dignissimos cupiditate facilis voluptas aliquam minus temporibus laudantium rem blanditiis ut itaque, sunt officia? Enim et eius expedita nemo nobis! Earum iusto voluptate autem nulla rerum laborum facere amet porro eaque, exercitationem quo totam officia accusamus! Saepe doloremque quae beatae ipsum voluptates similique velit aspernatur veniam eum corporis architecto, eligendi eius harum quas corrupti quos placeat quam voluptatum cumque perspiciatis rerum vitae. Molestiae nesciunt incidunt nihil voluptatibus nam cum, consequuntur rerum minima?',
         'likes': 0,
-        'notes': fakeNotes5,
+        'notes': [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
 
     // Load setSongs
