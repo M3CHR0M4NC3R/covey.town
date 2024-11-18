@@ -38,17 +38,18 @@ export default function MusicArea({
   useEffect(() => {
     const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
     const fakeNotes0 = [{'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}, {'note': notes[0], 'playNote': false}];
-    const fakeNotes1 = [{'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}];
+    const fakeNotes1 = [{'note': notes[1], 'playNote': true}, {'note': notes[1], 'playNote': true}, {'note': notes[1], 'playNote': true}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}, {'note': notes[1], 'playNote': false}];
     const fakeNotes2 = [{'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}, {'note': notes[2], 'playNote': false}];
     const fakeNotes3 = [{'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}, {'note': notes[3], 'playNote': false}];
     const fakeNotes4 = [{'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}, {'note': notes[4], 'playNote': false}];
     const fakeNotes5 = [{'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}, {'note': notes[5], 'playNote': false}];
+    const fakeNotes6 = [{'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}, {'note': notes[5], 'playNote': true}];
     const fakeSong0 = {
         'title': 'Song title 0 (3words) - Lorem, ipsum dolor.',
         'creator': 'WWahr4TzizNmctFb-fW5F', 
         'description': 'Lorem, ipsum dolor.',
         'likes': 0,
-        'notes': [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
+        'notes': [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes6],
     };
     const fakeSong1 = {
         'title': 'Song title 1 (5words) - Lorem ipsum dolor sit amet.',
@@ -100,14 +101,15 @@ export default function MusicArea({
 
   const handleKeyUp = (event: { key: string; }) => {
     // TODO: This is broken, there's some logic here that's wrong (compare it to the basement dining table below and the code at /components/Town/interactables/NewConversationModal.tsx)
-    // Over there the gaem pauses when they're typing (that's done with the handleKeyDown event above, but the unpause doesn't feel natural)
+    // Over there the game pauses when they're typing (that's done with the handleKeyDown event above, but the unpause doesn't feel natural)
     coveyTownController.unPause();
   }
 
+  /* If we have more than 100 characters saved then only get the first 100 characters and add an elipses */
   const shortenInput = (input: string) => {
     let output = '';
     if (input.length > 100) {
-        output = input.substring(0,100) + ' ...';
+        output = input.substring(0, 100) + ' ...';
     } else {
         output = input;
     }
@@ -129,7 +131,7 @@ export default function MusicArea({
         <div id="songsContainer" style={{display: 'flex', flexDirection: 'column'}}>
             {songs?.map((song, index) => (
                 <div key={index} id={`songContainer-${index}`} style={{borderBottom: '1px solid grey', padding: '0.5em 0 0.5em 0', display: 'grid', gridTemplateColumns: '0.4fr 1.3fr 1.3fr', gridTemplateRows: '1fr 1fr', gap: '0.5em 0.5em', gridTemplateAreas: `'btnView title creator' 'btnView desc likes'`}}>
-                    <button id={`btnView-${index}`} className='btnView' onClick={() => {setCurrSong(song); setRoute('creation');}} style={{backgroundColor: '#d4a301', padding: '0.5em', gridArea: `btnView`, height: 'fit-content', width: 'fit-content', justifySelf: 'center', alignSelf: 'center'}}>VIEW</button>
+                    <button id={`btnView-${index}`} className='btnView' onClick={() => {console.log(song); setCurrSong(song); setRoute('creation');}} style={{backgroundColor: '#d4a301', padding: '0.5em', gridArea: `btnView`, height: 'fit-content', width: 'fit-content', justifySelf: 'center', alignSelf: 'center'}}>VIEW</button>
                     <h3 id='title' className='title' style={{height: '50%', gridArea: 'title'}}><b>Title:</b> {shortenInput(song.title)}</h3>
                     <p id='desc' className='desc' style={{height: '50%', gridArea: 'desc'}}><b>Description:</b> {shortenInput(song.description)}</p>
                     <h3 id='creator' className='creator' style={{height: '50%', gridArea: 'creator'}}><b>Creator:</b> {shortenInput(song.creator)}</h3>

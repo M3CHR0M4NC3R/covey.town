@@ -27,10 +27,14 @@ export default function MusicArea({
   const playButton = useRef<HTMLButtonElement>(null);
   const synthPlayerArray = useRef<(Tone.Synth | Tone.MetalSynth | Tone.NoiseSynth)[]>([]);
 
+  const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
+  const board: { note: string; playNote: boolean }[][] = [];
+
   const [key, setKey] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
   const [error, setError] = useState('');
+  const [boardDup, setBoardDup] = useState(board);
   let beat = 0;
 
   //Creates all the Synth Players 4 normal; 1 Drum; 1 Cymbol
@@ -53,22 +57,59 @@ export default function MusicArea({
   }, []);
 
   //Creating the Board (2D array) each row has the same instrument and a playNote property
-  const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
-  const board: { note: string; playNote: boolean }[][] = [];
   for (const note of notes) {
     const row = [];
     console.log('NOTE TEST: ' + note);
-    if (currSong !== null) {
-      console.log(currSong);
+    // If the old song is null, create a new board
+    if (currSong === null) {
+      for (let i = 0; i < 16; i++) {
+        row.push({
+          note: note,
+          playNote: false,
+        });
+      }
+      board.push(row);
+    } else { // If the old song exists then load the data from the song into the board
+      board.length = 0; // Clear board (only way to clear a const array)
+      for (let i = 0; i < currSong.notes.length; i++) {
+        let newRow = [];
+        newRow = currSong.notes[i];
+        board.push(newRow);
+      }
     }
-    for (let i = 0; i < 16; i++) {
-      row.push({
-        note: note,
-        playNote: false,
-      });
+    // console.log(board);
+  }
+
+  /* Load board into boardDup so React can update things easier */
+  useEffect(() => {
+    if (currSong == null) {
+      setBoardDup(board);
+    } else {
+      setBoardDup(currSong.notes);
+      // Go through every element in currSong.notes and if it is true then set the corresponding element in board to true
+      for (let i = 0; i < currSong.notes.length; i++) {
+        for (let j = 0; j < currSong.notes[i].length; j++) {
+          if (currSong.notes[i][j].playNote === true) {
+            // Get this note and set the class to be "active"
+            let note = document.getElementById(`note-${i}-${j}`);
+            note?.classList.toggle('active');
+          }
+        }
+      }
     }
-    board.push(row);
-    console.log(board);
+  }, [boardDup])
+
+  const cleanBoard = () => {
+    for (let note of boardDup) {
+      for (let i = 0; i < 16; i++) {
+        if (note[i].playNote === true) {
+          // Clean board
+          note[i].playNote = false;
+          board.length = 0; // Clear board (only way to clear a const array)
+        }
+      }
+    }
+    board.length = 0; // Clear board (only way to clear a const array)
   }
 
   // configLoop continually looks through the board going checking the beat index in each row
@@ -122,12 +163,13 @@ export default function MusicArea({
 
     board.forEach((row, rowIndex) => {
       const mixerRow = document.createElement('div');
-      mixerRow.className = 'mixer-row';
+      mixerRow.className = `mixer-row-${rowIndex}`;
       mixerRow.style.display = 'flex';
 
       row.forEach((note, noteIndex) => {
         const button = document.createElement('button');
         button.className = 'note';
+        button.id = `note-${rowIndex}-${noteIndex}`;
         button.textContent = `${note.note}\n${noteIndex + 1}`;
         button.addEventListener('click', e => handleNoteClick(rowIndex, noteIndex, e));
         mixerRow.appendChild(button);
@@ -252,7 +294,7 @@ export default function MusicArea({
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: '1fr', gridColumnGap: '0px', gridRowGap: '0px',  marginTop: '10px', height: '100%'}}>
         <button id="saveBtn" onClick={() => {saveSong();}} style={{padding: 'revert', backgroundColor: '#01c6d4'}}>Save!</button>
         <button ref={playButton} style={{padding: 'revert', backgroundColor: '#1ad401'}}>{playing ? 'STOP' : 'PLAY'}</button>
-        <button id="toLookup" onClick={() => {checkIfEditsWereMade();}} style={{padding: 'revert', backgroundColor: '#d4a301'}}>Browse Other Songs</button>
+        <button id="toLookup" onClick={() => {checkIfEditsWereMade(); currSong = null; cleanBoard();}} style={{padding: 'revert', backgroundColor: '#d4a301'}}>Browse Other Songs</button>
       </div>
       <style>
         {`
@@ -270,6 +312,9 @@ export default function MusicArea({
           }
         `}
       </style>
+      {/* <button onClick={() => {console.log(currSong)}}>currSong</button>
+      <button onClick={() => {console.log(board)}}>board</button>
+      <button onClick={() => {console.log(boardDup)}}>boardDup</button> */}
     </Container>
   );
 }
