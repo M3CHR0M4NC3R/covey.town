@@ -98,8 +98,8 @@ function GameArea({ interactableID }: { interactableID: InteractableID }): JSX.E
           </AccordionItem>
         </Accordion>
       )}
-      <Flex>
-        <Box>
+      <Flex id='outer1' style={{width: '100%'}}>
+        <Box id='outer2' style={{width: '100%'}}>
           {(() => {
             let type = gameAreaController.toInteractableAreaModel().type;
             // TODO: Figure out how to get "type" to be MusicArea without it being hard forced by this if statement.
