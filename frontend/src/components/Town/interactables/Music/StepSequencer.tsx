@@ -35,6 +35,7 @@ export default function MusicArea({
   const [started, setStarted] = useState(false);
   const [error, setError] = useState('');
   const [boardDup, setBoardDup] = useState(board);
+  const [originalBoard, setOriginalBoard] = useState<{ note: string; playNote: boolean }[][] | null>(null);
   let beat = 0;
 
   //Creates all the Synth Players 4 normal; 1 Drum; 1 Cymbol
@@ -98,6 +99,11 @@ export default function MusicArea({
       }
     }
   }, [boardDup])
+
+  /* Create a board object that can be referenced for changes incase the user forgets to save their work */
+  useEffect(() => {
+    setOriginalBoard(JSON.parse(JSON.stringify(board)));
+  }, [])
 
   const cleanBoard = () => {
     for (let note of boardDup) {
@@ -244,14 +250,34 @@ export default function MusicArea({
     coveyTownController.unPause();
   }
 
+  // Helper function to compare arrays
+  function arraysEqual(a: any, b: any) {
+    if (a.length !== b.length) {
+      return false;
+    }
+
+    for (var i = 0; i < a.length; ++i) {
+      for (var j = 0; j < a[i].length; ++j) {
+        if ((a[i][j].note !== b[i][j].note) || (a[i][j].playNote !== b[i][j].playNote)) {
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  }
+
   /* TODO: Before changing scenes this method will be called to see if the user forgot to save their work. If they forgot then prompt them to save */
   /* Maybe they can press again to just continue without saving? */
   const checkIfEditsWereMade = () => {
-    if (false) { // Compare the arrays currSong (from lookup) and board. If they are not the same then prompt the user to save so they dont lose their work
+    if (arraysEqual(originalBoard, board) === false) { // Compare the arrays currSong (from lookup) and board. If they are not the same then prompt the user to save so they dont lose their work
       setError('You have unsaved changes. Would you like to save before leaving?');
       // Check if changes were made by comparing the arrays currSong and board. If they are not the same then prompt the user to save
       // so they dont lose their work
     } else {
+      // Cleanup and transition
+      currSong = null; 
+      cleanBoard();
       setRoute('lookup');
     }
   }
@@ -294,7 +320,7 @@ export default function MusicArea({
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: '1fr', gridColumnGap: '0px', gridRowGap: '0px',  marginTop: '10px', height: '100%'}}>
         <button id="saveBtn" onClick={() => {saveSong();}} style={{padding: 'revert', backgroundColor: '#01c6d4'}}>Save!</button>
         <button ref={playButton} style={{padding: 'revert', backgroundColor: '#1ad401'}}>{playing ? 'STOP' : 'PLAY'}</button>
-        <button id="toLookup" onClick={() => {checkIfEditsWereMade(); currSong = null; cleanBoard();}} style={{padding: 'revert', backgroundColor: '#d4a301'}}>Browse Other Songs</button>
+        <button id="toLookup" onClick={() => {checkIfEditsWereMade();}} style={{padding: 'revert', backgroundColor: '#d4a301'}}>Browse Other Songs</button>
       </div>
       <style>
         {`
@@ -314,7 +340,8 @@ export default function MusicArea({
       </style>
       {/* <button onClick={() => {console.log(currSong)}}>currSong</button>
       <button onClick={() => {console.log(board)}}>board</button>
-      <button onClick={() => {console.log(boardDup)}}>boardDup</button> */}
+      <button onClick={() => {console.log(boardDup)}}>boardDup</button>
+      <button onClick={() => {console.log(originalBoard)}}>originalBoard</button> */}
     </Container>
   );
 }
