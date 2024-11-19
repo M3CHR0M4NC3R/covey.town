@@ -272,17 +272,17 @@ export default function MusicArea({
   /* TODO: Before changing scenes this method will be called to see if the user forgot to save their work. If they forgot then prompt them to save */
   /* Maybe they can press again to just continue without saving? */
   const checkIfEditsWereMade = () => {
-    if (arraysEqual(originalBoard, board) === false) {
-      // Compare the arrays currSong (from lookup) and board. If they are not the same then prompt the user to save so they dont lose their work
-      setError('You have unsaved changes. Would you like to save before leaving?');
-      // Check if changes were made by comparing the arrays currSong and board. If they are not the same then prompt the user to save
-      // so they dont lose their work
-    } else {
-      // Cleanup and transition
-      currSong = null;
-      cleanBoard();
-      setRoute('lookup');
-    }
+    // if (arraysEqual(originalBoard, board) === false) {
+    //   // Compare the arrays currSong (from lookup) and board. If they are not the same then prompt the user to save so they dont lose their work
+    //   setError('You have unsaved changes. Would you like to save before leaving?');
+    //   // Check if changes were made by comparing the arrays currSong and board. If they are not the same then prompt the user to save
+    //   // so they dont lose their work
+    // } else {
+    //   // Cleanup and transition
+    currSong = null;
+    cleanBoard();
+    setRoute('lookup');
+    // }
   };
 
   // TODO: Save the song to the database (pass it the board object)
@@ -433,7 +433,12 @@ export default function MusicArea({
         `}
       </style>
       {/* <button onClick={() => {console.log(currSong)}}>currSong</button>
-      <button onClick={() => {console.log(board)}}>board</button>
+      <button
+        onClick={() => {
+          console.log(board);
+        }}>
+        board
+      </button>
       <button onClick={() => {console.log(boardDup)}}>boardDup</button>
       <button onClick={() => {console.log(originalBoard)}}>originalBoard</button> */}
     </Container>
