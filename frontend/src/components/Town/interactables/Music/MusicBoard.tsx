@@ -1,4 +1,4 @@
-import { Button, chakra, Container, useToast } from '@chakra-ui/react';
+import { chakra, Container, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import MusicAreaController from '../../../../classes/interactable/MusicAreaController';
 
@@ -39,7 +39,6 @@ const StyledMusicBoard = chakra(Container, {
  */
 export default function MusicBoard({ gameAreaController }: MusicGameProps): JSX.Element {
   const [board, setBoard] = useState<string>(gameAreaController.id);
-  const toast = useToast();
   useEffect(() => {
     gameAreaController.addListener('boardChanged', setBoard);
     return () => {

@@ -1,20 +1,16 @@
-import { Button, Container, List, ListItem, useToast } from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 import React, { useEffect, useState, useRef } from 'react';
-import TicTacToeAreaController from '../../../../classes/interactable/TicTacToeAreaController';
-import PlayerController from '../../../../classes/PlayerController';
-import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
-import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
+import { InteractableID } from '../../../../types/CoveyTownSocket';
 import * as Tone from 'tone'; // Import Tone.js
-import { GameObjects } from 'phaser';
 import { Song } from './MusicArea';
 
 export default function MusicArea({
-  interactableID,
-  route,
+  // interactableID,
+  // route,
+  // setCurrSong,
   setRoute,
   currSong,
-  setCurrSong,
 }: {
   interactableID: InteractableID;
   route: string;
@@ -35,7 +31,9 @@ export default function MusicArea({
   const [started, setStarted] = useState(false);
   const [error, setError] = useState('');
   const [boardDup, setBoardDup] = useState(board);
-  const [originalBoard, setOriginalBoard] = useState<{ note: string; playNote: boolean }[][] | null>(null);
+  const [originalBoard, setOriginalBoard] = useState<
+    { note: string; playNote: boolean }[][] | null
+  >(null);
   let beat = 0;
 
   //Creates all the Synth Players 4 normal; 1 Drum; 1 Cymbol
@@ -70,7 +68,8 @@ export default function MusicArea({
         });
       }
       board.push(row);
-    } else { // If the old song exists then load the data from the song into the board
+    } else {
+      // If the old song exists then load the data from the song into the board
       board.length = 0; // Clear board (only way to clear a const array)
       for (let i = 0; i < currSong.notes.length; i++) {
         let newRow = [];
@@ -92,21 +91,21 @@ export default function MusicArea({
         for (let j = 0; j < currSong.notes[i].length; j++) {
           if (currSong.notes[i][j].playNote === true) {
             // Get this note and set the class to be "active"
-            let note = document.getElementById(`note-${i}-${j}`);
+            const note = document.getElementById(`note-${i}-${j}`);
             note?.classList.toggle('active');
           }
         }
       }
     }
-  }, [boardDup])
+  }, [boardDup]);
 
   /* Create a board object that can be referenced for changes incase the user forgets to save their work */
   useEffect(() => {
     setOriginalBoard(JSON.parse(JSON.stringify(board)));
-  }, [])
+  }, []);
 
   const cleanBoard = () => {
-    for (let note of boardDup) {
+    for (const note of boardDup) {
       for (let i = 0; i < 16; i++) {
         if (note[i].playNote === true) {
           // Clean board
@@ -116,7 +115,7 @@ export default function MusicArea({
       }
     }
     board.length = 0; // Clear board (only way to clear a const array)
-  }
+  };
 
   // configLoop continually looks through the board going checking the beat index in each row
   // If playnote is true the note should play
@@ -232,23 +231,23 @@ export default function MusicArea({
 
   /* Whenever the user presses a button, pause the game and clear the error log (error) if it exists */
   const coveyTownController = useTownController();
-  const handleKeyDown = (event: { key: string; }) => {
+  const handleKeyDown = (event: { key: string }) => {
     if (error !== '') {
       setError('');
     }
     if (event.key === 'Enter') {
-      console.log('TODO: Search the database for the title!')
+      console.log('TODO: Search the database for the title!');
     } else {
-        coveyTownController.pause();
+      coveyTownController.pause();
     }
-  }
+  };
 
   /* Whenever the user releases a button, unpause the game*/
-  const handleKeyUp = (event: { key: string; }) => {
+  const handleKeyUp = () => {
     // TODO: This is broken, there's some logic here that's wrong (compare it to the basement dining table below and the code at /components/Town/interactables/NewConversationModal.tsx)
     // Over there the game pauses when they're typing (that's done with the handleKeyDown event above, but the unpause doesn't feel natural)
     coveyTownController.unPause();
-  }
+  };
 
   // Helper function to compare arrays
   function arraysEqual(a: any, b: any) {
@@ -256,31 +255,32 @@ export default function MusicArea({
       return false;
     }
 
-    for (var i = 0; i < a.length; ++i) {
-      for (var j = 0; j < a[i].length; ++j) {
-        if ((a[i][j].note !== b[i][j].note) || (a[i][j].playNote !== b[i][j].playNote)) {
+    for (let i = 0; i < a.length; ++i) {
+      for (let j = 0; j < a[i].length; ++j) {
+        if (a[i][j].note !== b[i][j].note || a[i][j].playNote !== b[i][j].playNote) {
           return false;
         }
       }
     }
-    
+
     return true;
   }
 
   /* TODO: Before changing scenes this method will be called to see if the user forgot to save their work. If they forgot then prompt them to save */
   /* Maybe they can press again to just continue without saving? */
   const checkIfEditsWereMade = () => {
-    if (arraysEqual(originalBoard, board) === false) { // Compare the arrays currSong (from lookup) and board. If they are not the same then prompt the user to save so they dont lose their work
+    if (arraysEqual(originalBoard, board) === false) {
+      // Compare the arrays currSong (from lookup) and board. If they are not the same then prompt the user to save so they dont lose their work
       setError('You have unsaved changes. Would you like to save before leaving?');
       // Check if changes were made by comparing the arrays currSong and board. If they are not the same then prompt the user to save
       // so they dont lose their work
     } else {
       // Cleanup and transition
-      currSong = null; 
+      currSong = null;
       cleanBoard();
       setRoute('lookup');
     }
-  }
+  };
 
   // TODO: Save the song to the database (pass it the board object)
   const saveSong = () => {
@@ -288,26 +288,60 @@ export default function MusicArea({
 
     // Update the user
     setError('Song Saved!');
-  }
+  };
 
   return (
     <Container>
-      <div id="lookupContainer" style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '0.5em 0 0.5em 0', borderTop: 'solid', borderBottom: 'solid', marginBottom: '1.0em'}}>
-            <div style={{display: 'flex', flexDirection: 'column', width: '40%'}}>
-              <h3 id="song" style={{width: "70%"}}>Click on notes to make a song: </h3>
-            </div>
-            <div style={{display: 'flex', flexDirection: 'column', gap: '0.25em'}}>
-              <div>
-                <label htmlFor="title"><b>Title: </b></label>
-                <input type="text" name="title" id="title" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} style={{backgroundColor: '#bababa', minHeight: '100%'}}/>
-              </div>
-              <div>
-                <label htmlFor="description"><b>Description: </b></label>
-                <input type="text" name="description" id="description" onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} style={{backgroundColor: '#bababa', minHeight: '100%'}}/>
-              </div>
-            </div>
+      <div
+        id='lookupContainer'
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: '0.5em 0 0.5em 0',
+          borderTop: 'solid',
+          borderBottom: 'solid',
+          marginBottom: '1.0em',
+        }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
+          <h3 id='song' style={{ width: '70%' }}>
+            Click on notes to make a song:{' '}
+          </h3>
         </div>
-        {(error !== '') && <div id="error" style={{marginBottom: '1em', justifySelf: 'center'}}>{error}</div>}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25em' }}>
+          <div>
+            <label htmlFor='title'>
+              <b>Title: </b>
+            </label>
+            <input
+              type='text'
+              name='title'
+              id='title'
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
+              style={{ backgroundColor: '#bababa', minHeight: '100%' }}
+            />
+          </div>
+          <div>
+            <label htmlFor='description'>
+              <b>Description: </b>
+            </label>
+            <input
+              type='text'
+              name='description'
+              id='description'
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
+              style={{ backgroundColor: '#bababa', minHeight: '100%' }}
+            />
+          </div>
+        </div>
+      </div>
+      {error !== '' && (
+        <div id='error' style={{ marginBottom: '1em', justifySelf: 'center' }}>
+          {error}
+        </div>
+      )}
       <div
         ref={mixerRef}
         style={{
@@ -317,10 +351,35 @@ export default function MusicArea({
           gap: '10px',
         }}
       />
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: '1fr', gridColumnGap: '0px', gridRowGap: '0px',  marginTop: '10px', height: '100%'}}>
-        <button id="saveBtn" onClick={() => {saveSong();}} style={{padding: 'revert', backgroundColor: '#01c6d4'}}>Save!</button>
-        <button ref={playButton} style={{padding: 'revert', backgroundColor: '#1ad401'}}>{playing ? 'STOP' : 'PLAY'}</button>
-        <button id="toLookup" onClick={() => {checkIfEditsWereMade();}} style={{padding: 'revert', backgroundColor: '#d4a301'}}>Browse Other Songs</button>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateRows: '1fr',
+          gridColumnGap: '0px',
+          gridRowGap: '0px',
+          marginTop: '10px',
+          height: '100%',
+        }}>
+        <button
+          id='saveBtn'
+          onClick={() => {
+            saveSong();
+          }}
+          style={{ padding: 'revert', backgroundColor: '#01c6d4' }}>
+          Save!
+        </button>
+        <button ref={playButton} style={{ padding: 'revert', backgroundColor: '#1ad401' }}>
+          {playing ? 'STOP' : 'PLAY'}
+        </button>
+        <button
+          id='toLookup'
+          onClick={() => {
+            checkIfEditsWereMade();
+          }}
+          style={{ padding: 'revert', backgroundColor: '#d4a301' }}>
+          Browse Other Songs
+        </button>
       </div>
       <style>
         {`
