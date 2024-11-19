@@ -9,6 +9,7 @@ export interface Song {
   creator: string;
   description: string;
   likes: number;
+  likedUsers: string[];
   notes: { note: string; playNote: boolean }[][];
 }
 

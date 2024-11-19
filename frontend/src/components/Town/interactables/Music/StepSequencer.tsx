@@ -4,6 +4,9 @@ import useTownController from '../../../../hooks/useTownController';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import * as Tone from 'tone'; // Import Tone.js
 import { Song } from './MusicArea';
+import TownController from '../../../../classes/TownController';
+import PlayerController from '../../../../classes/PlayerController';
+import GameAreaController from '../../../../classes/interactable/GameAreaController';
 
 export default function MusicArea({
   // interactableID,
@@ -284,10 +287,34 @@ export default function MusicArea({
 
   // TODO: Save the song to the database (pass it the board object)
   const saveSong = () => {
+    // Check if title and description are empty, if so then error message
+    const titleElement = document.getElementById('title') as HTMLInputElement;
+    const descriptionElement = document.getElementById('description') as HTMLInputElement;
+    if (titleElement.value.length === 0 || descriptionElement.value.length === 0) {
+      setError('Title or Description is empty!');
+      return;
+    }
+
     // Save the song to the database
 
     // Update the user
     setError('Song Saved!');
+  };
+
+  // TODO: Like the song to the database (pass it the board object)
+  const likeSong = () => {
+    // Check if the user has already liked the song
+    const username = '';
+    console.log(username);
+    if (currSong?.likedUsers.includes(username)) {
+      setError('You have already liked this song!');
+      return;
+    }
+
+    // Update the database
+
+    // Update the user
+    setError('Song Liked!');
   };
 
   return (
@@ -354,7 +381,7 @@ export default function MusicArea({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateColumns: 'repeat(4, 1fr)',
           gridTemplateRows: '1fr',
           gridColumnGap: '0px',
           gridRowGap: '0px',
@@ -379,6 +406,14 @@ export default function MusicArea({
           }}
           style={{ padding: 'revert', backgroundColor: '#d4a301' }}>
           Browse Other Songs
+        </button>
+        <button
+          id='likeBtn'
+          onClick={() => {
+            likeSong();
+          }}
+          style={{ padding: 'revert', backgroundColor: '#e4e176' }}>
+          LIKE
         </button>
       </div>
       <style>
