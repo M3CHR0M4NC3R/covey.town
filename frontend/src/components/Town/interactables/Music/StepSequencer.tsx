@@ -143,6 +143,8 @@ export default function MusicArea({
         if (sound.playNote) {
           console.log('Playing Sound: ' + sound.note);
           if (sound.note == 'Cymbol' || sound.note == 'Drum') {
+            // Was synth.triggerAttackRelease('16n', time); but ran into this error in console.log() when spamming
+            /* "Events scheduled inside of scheduled callbacks should use the passed in scheduling time. See https://github.com/Tonejs/Tone.js/wiki/Accurate-Timing" */
             synth.triggerAttackRelease('16n', time);
           } else {
             synth.triggerAttackRelease(sound.note, '16n', time);
@@ -253,21 +255,21 @@ export default function MusicArea({
   };
 
   // Helper function to compare arrays
-  function arraysEqual(a: any, b: any) {
-    if (a.length !== b.length) {
-      return false;
-    }
+  // function arraysEqual(a: any, b: any) {
+  //   if (a.length !== b.length) {
+  //     return false;
+  //   }
 
-    for (let i = 0; i < a.length; ++i) {
-      for (let j = 0; j < a[i].length; ++j) {
-        if (a[i][j].note !== b[i][j].note || a[i][j].playNote !== b[i][j].playNote) {
-          return false;
-        }
-      }
-    }
+  //   for (let i = 0; i < a.length; ++i) {
+  //     for (let j = 0; j < a[i].length; ++j) {
+  //       if (a[i][j].note !== b[i][j].note || a[i][j].playNote !== b[i][j].playNote) {
+  //         return false;
+  //       }
+  //     }
+  //   }
 
-    return true;
-  }
+  //   return true;
+  // }
 
   /* TODO: Before changing scenes this method will be called to see if the user forgot to save their work. If they forgot then prompt them to save */
   /* Maybe they can press again to just continue without saving? */
@@ -432,14 +434,14 @@ export default function MusicArea({
           }
         `}
       </style>
-      {/* <button onClick={() => {console.log(currSong)}}>currSong</button>
+      {/* <button onClick={() => {console.log(currSong)}}>currSong</button> */}
       <button
         onClick={() => {
           console.log(board);
         }}>
         board
       </button>
-      <button onClick={() => {console.log(boardDup)}}>boardDup</button>
+      {/* <button onClick={() => {console.log(boardDup)}}>boardDup</button>
       <button onClick={() => {console.log(originalBoard)}}>originalBoard</button> */}
     </Container>
   );
