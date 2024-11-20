@@ -452,12 +452,12 @@ export default function MusicArea({
         `}
       </style>
       {/* <button onClick={() => {console.log(currSong)}}>currSong</button> */}
-      <button
+      {/* <button
         onClick={() => {
           console.log(board);
         }}>
         board
-      </button>
+      </button> */}
       {/* <button onClick={() => {console.log(boardDup)}}>boardDup</button>
       <button onClick={() => {console.log(originalBoard)}}>originalBoard</button> */}
     </Container>
