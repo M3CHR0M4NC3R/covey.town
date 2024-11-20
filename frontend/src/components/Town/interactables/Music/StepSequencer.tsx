@@ -4,12 +4,13 @@ import useTownController from '../../../../hooks/useTownController';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import * as Tone from 'tone'; // Import Tone.js
 import { Song } from './MusicArea';
-import TownController from '../../../../classes/TownController';
+import TownController, { useInteractableAreaController } from '../../../../classes/TownController';
 import PlayerController from '../../../../classes/PlayerController';
 import GameAreaController from '../../../../classes/interactable/GameAreaController';
+import MusicAreaController from '../../../../classes/interactable/MusicAreaController';
 
 export default function MusicArea({
-  // interactableID,
+  interactableID,
   // route,
   // setCurrSong,
   setRoute,
@@ -25,6 +26,7 @@ export default function MusicArea({
   const mixerRef = useRef<HTMLDivElement>(null);
   const playButton = useRef<HTMLButtonElement>(null);
   const synthPlayerArray = useRef<(Tone.Synth | Tone.MetalSynth | Tone.NoiseSynth)[]>([]);
+  const gameAreaController = useInteractableAreaController<MusicAreaController>(interactableID);
 
   const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
   const board: { note: string; playNote: boolean }[][] = [];
@@ -37,6 +39,8 @@ export default function MusicArea({
   const [originalBoard, setOriginalBoard] = useState<
     { note: string; playNote: boolean }[][] | null
   >(null);
+  const [player, setPlayer] = useState('');
+  const coveyTownController = useTownController();
   let beat = 0;
 
   //Creates all the Synth Players 4 normal; 1 Drum; 1 Cymbol
@@ -106,6 +110,16 @@ export default function MusicArea({
   useEffect(() => {
     setOriginalBoard(JSON.parse(JSON.stringify(board)));
   }, []);
+
+  /* Setup gameAreaController on load */
+  useEffect(() => {
+    if (!gameAreaController) return;
+    setPlayer(gameAreaController.x?.id || '');
+    // setPlayers({
+    //   X: gameAreaController.x?.userName || '(No player yet!)',
+    //   O: gameAreaController.o?.userName || '(No player yet!)',
+    // });
+  }, [gameAreaController, coveyTownController.ourPlayer.id]);
 
   const cleanBoard = () => {
     for (const note of boardDup) {
@@ -235,7 +249,6 @@ export default function MusicArea({
   /*_______________________________________________________________________*/
 
   /* Whenever the user presses a button, pause the game and clear the error log (error) if it exists */
-  const coveyTownController = useTownController();
   const handleKeyDown = (event: { key: string }) => {
     if (error !== '') {
       setError('');

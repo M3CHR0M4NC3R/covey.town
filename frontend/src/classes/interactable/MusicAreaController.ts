@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import { GameArea, GameStatus, MusicGameState } from '../../types/CoveyTownSocket';
 import GameAreaController, { GameEventTypes } from './GameAreaController';
+import PlayerController from '../PlayerController';
 export type MusicEvents = GameEventTypes & {
   turnChanged: (isOurTurn: boolean) => void;
 };
@@ -31,6 +32,20 @@ export default class MusicAreaController extends GameAreaController<MusicGameSta
    */
   public isActive(): boolean {
     return !this.isEmpty() && this.status && this.status !== 'OVER';
+  }
+
+  /**
+   * Returns the player with the 'X' game piece, if there is one, or undefined otherwise
+   */
+  get x(): PlayerController | undefined {
+    const currentGame = this._model.game;
+
+    // check if game is active and x exists, if so ereturn the value from the controller
+    if (currentGame && currentGame.state.id) {
+      return this._townController.getPlayer(currentGame.state.id);
+    }
+
+    return undefined; //TODO
   }
 
   /**
