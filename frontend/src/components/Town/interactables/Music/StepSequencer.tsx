@@ -22,6 +22,13 @@ export default function MusicArea({
   currSong: Song | null;
   setCurrSong: React.Dispatch<React.SetStateAction<Song | null>>;
 }): JSX.Element {
+  /*
+    List of TODOS Referenced in this document:
+    - TODO: Search the database for the title!
+    - Save the song to the database (pass it the board object)
+    Like the song to the database (pass it the board object)
+  */
+
   // UI Elements
   const mixerRef = useRef<HTMLDivElement>(null);
   const playButton = useRef<HTMLButtonElement>(null);
@@ -262,8 +269,6 @@ export default function MusicArea({
 
   /* Whenever the user releases a button, unpause the game*/
   const handleKeyUp = () => {
-    // TODO: This is broken, there's some logic here that's wrong (compare it to the basement dining table below and the code at /components/Town/interactables/NewConversationModal.tsx)
-    // Over there the game pauses when they're typing (that's done with the handleKeyDown event above, but the unpause doesn't feel natural)
     coveyTownController.unPause();
   };
 
@@ -284,7 +289,6 @@ export default function MusicArea({
   //   return true;
   // }
 
-  /* TODO: Before changing scenes this method will be called to see if the user forgot to save their work. If they forgot then prompt them to save */
   /* Maybe they can press again to just continue without saving? */
   const checkIfEditsWereMade = () => {
     // if (arraysEqual(originalBoard, board) === false) {
