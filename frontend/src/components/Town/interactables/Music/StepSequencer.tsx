@@ -1,26 +1,53 @@
-import { Button, Container, List, ListItem, useToast } from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 import React, { useEffect, useState, useRef } from 'react';
-import TicTacToeAreaController from '../../../../classes/interactable/TicTacToeAreaController';
-import PlayerController from '../../../../classes/PlayerController';
-import { useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
-import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
+import { InteractableID } from '../../../../types/CoveyTownSocket';
 import * as Tone from 'tone'; // Import Tone.js
-import { GameObjects } from 'phaser';
+import { Song } from './MusicArea';
+import TownController, { useInteractableAreaController } from '../../../../classes/TownController';
+import PlayerController from '../../../../classes/PlayerController';
+import GameAreaController from '../../../../classes/interactable/GameAreaController';
+import MusicAreaController from '../../../../classes/interactable/MusicAreaController';
 
 export default function MusicArea({
   interactableID,
+  // route,
+  // setCurrSong,
+  setRoute,
+  currSong,
 }: {
   interactableID: InteractableID;
+  route: string;
+  setRoute: React.Dispatch<React.SetStateAction<string>>;
+  currSong: Song | null;
+  setCurrSong: React.Dispatch<React.SetStateAction<Song | null>>;
 }): JSX.Element {
+  /*
+    List of TODOS Referenced in this document:
+    - TODO: Search the database for the title!
+    - Save the song to the database (pass it the board object)
+    Like the song to the database (pass it the board object)
+  */
+
   // UI Elements
   const mixerRef = useRef<HTMLDivElement>(null);
   const playButton = useRef<HTMLButtonElement>(null);
   const synthPlayerArray = useRef<(Tone.Synth | Tone.MetalSynth | Tone.NoiseSynth)[]>([]);
+  const gameAreaController = useInteractableAreaController<MusicAreaController>(interactableID);
+
+  const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
+  const board: { note: string; playNote: boolean }[][] = [];
 
   const [key, setKey] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
+  const [error, setError] = useState('');
+  const [boardDup, setBoardDup] = useState(board);
+  const [originalBoard, setOriginalBoard] = useState<
+    { note: string; playNote: boolean }[][] | null
+  >(null);
+  const [player, setPlayer] = useState('');
+  const coveyTownController = useTownController();
   let beat = 0;
 
   //Creates all the Synth Players 4 normal; 1 Drum; 1 Cymbol
@@ -43,19 +70,76 @@ export default function MusicArea({
   }, []);
 
   //Creating the Board (2D array) each row has the same instrument and a playNote property
-  const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
-  const board: { note: string; playNote: boolean }[][] = [];
   for (const note of notes) {
     const row = [];
     console.log('NOTE TEST: ' + note);
-    for (let i = 0; i < 16; i++) {
-      row.push({
-        note: note,
-        playNote: false,
-      });
+    // If the old song is null, create a new board
+    if (currSong === null) {
+      for (let i = 0; i < 16; i++) {
+        row.push({
+          note: note,
+          playNote: false,
+        });
+      }
+      board.push(row);
+    } else {
+      // If the old song exists then load the data from the song into the board
+      board.length = 0; // Clear board (only way to clear a const array)
+      for (let i = 0; i < currSong.notes.length; i++) {
+        let newRow = [];
+        newRow = currSong.notes[i];
+        board.push(newRow);
+      }
     }
-    board.push(row);
+    // console.log(board);
   }
+
+  /* Load board into boardDup so React can update things easier */
+  useEffect(() => {
+    if (currSong == null) {
+      setBoardDup(board);
+    } else {
+      setBoardDup(currSong.notes);
+      // Go through every element in currSong.notes and if it is true then set the corresponding element in board to true
+      for (let i = 0; i < currSong.notes.length; i++) {
+        for (let j = 0; j < currSong.notes[i].length; j++) {
+          if (currSong.notes[i][j].playNote === true) {
+            // Get this note and set the class to be "active"
+            const note = document.getElementById(`note-${i}-${j}`);
+            note?.classList.toggle('active');
+          }
+        }
+      }
+    }
+  }, [boardDup]);
+
+  /* Create a board object that can be referenced for changes incase the user forgets to save their work */
+  useEffect(() => {
+    setOriginalBoard(JSON.parse(JSON.stringify(board)));
+  }, []);
+
+  /* Setup gameAreaController on load */
+  useEffect(() => {
+    if (!gameAreaController) return;
+    setPlayer(gameAreaController.x?.id || '');
+    // setPlayers({
+    //   X: gameAreaController.x?.userName || '(No player yet!)',
+    //   O: gameAreaController.o?.userName || '(No player yet!)',
+    // });
+  }, [gameAreaController, coveyTownController.ourPlayer.id]);
+
+  const cleanBoard = () => {
+    for (const note of boardDup) {
+      for (let i = 0; i < 16; i++) {
+        if (note[i].playNote === true) {
+          // Clean board
+          note[i].playNote = false;
+          board.length = 0; // Clear board (only way to clear a const array)
+        }
+      }
+    }
+    board.length = 0; // Clear board (only way to clear a const array)
+  };
 
   // configLoop continually looks through the board going checking the beat index in each row
   // If playnote is true the note should play
@@ -80,6 +164,8 @@ export default function MusicArea({
         if (sound.playNote) {
           console.log('Playing Sound: ' + sound.note);
           if (sound.note == 'Cymbol' || sound.note == 'Drum') {
+            // Was synth.triggerAttackRelease('16n', time); but ran into this error in console.log() when spamming
+            /* "Events scheduled inside of scheduled callbacks should use the passed in scheduling time. See https://github.com/Tonejs/Tone.js/wiki/Accurate-Timing" */
             synth.triggerAttackRelease('16n', time);
           } else {
             synth.triggerAttackRelease(sound.note, '16n', time);
@@ -108,12 +194,13 @@ export default function MusicArea({
 
     board.forEach((row, rowIndex) => {
       const mixerRow = document.createElement('div');
-      mixerRow.className = 'mixer-row';
+      mixerRow.className = `mixer-row-${rowIndex}`;
       mixerRow.style.display = 'flex';
 
       row.forEach((note, noteIndex) => {
         const button = document.createElement('button');
         button.className = 'note';
+        button.id = `note-${rowIndex}-${noteIndex}`;
         button.textContent = `${note.note}\n${noteIndex + 1}`;
         button.addEventListener('click', e => handleNoteClick(rowIndex, noteIndex, e));
         mixerRow.appendChild(button);
@@ -168,8 +255,139 @@ export default function MusicArea({
 
   /*_______________________________________________________________________*/
 
+  /* Whenever the user presses a button, pause the game and clear the error log (error) if it exists */
+  const handleKeyDown = (event: { key: string }) => {
+    if (error !== '') {
+      setError('');
+    }
+    if (event.key === 'Enter') {
+      console.log('TODO: Search the database for the title!');
+    } else {
+      coveyTownController.pause();
+    }
+  };
+
+  /* Whenever the user releases a button, unpause the game*/
+  const handleKeyUp = () => {
+    coveyTownController.unPause();
+  };
+
+  // Helper function to compare arrays
+  // function arraysEqual(a: any, b: any) {
+  //   if (a.length !== b.length) {
+  //     return false;
+  //   }
+
+  //   for (let i = 0; i < a.length; ++i) {
+  //     for (let j = 0; j < a[i].length; ++j) {
+  //       if (a[i][j].note !== b[i][j].note || a[i][j].playNote !== b[i][j].playNote) {
+  //         return false;
+  //       }
+  //     }
+  //   }
+
+  //   return true;
+  // }
+
+  /* Maybe they can press again to just continue without saving? */
+  const checkIfEditsWereMade = () => {
+    // if (arraysEqual(originalBoard, board) === false) {
+    //   // Compare the arrays currSong (from lookup) and board. If they are not the same then prompt the user to save so they dont lose their work
+    //   setError('You have unsaved changes. Would you like to save before leaving?');
+    //   // Check if changes were made by comparing the arrays currSong and board. If they are not the same then prompt the user to save
+    //   // so they dont lose their work
+    // } else {
+    //   // Cleanup and transition
+    currSong = null;
+    cleanBoard();
+    setRoute('lookup');
+    // }
+  };
+
+  // TODO: Save the song to the database (pass it the board object)
+  const saveSong = () => {
+    // Check if title and description are empty, if so then error message
+    const titleElement = document.getElementById('title') as HTMLInputElement;
+    const descriptionElement = document.getElementById('description') as HTMLInputElement;
+    if (titleElement.value.length === 0 || descriptionElement.value.length === 0) {
+      setError('Title or Description is empty!');
+      return;
+    }
+
+    // Save the song to the database
+
+    // Update the user
+    setError('Song Saved!');
+  };
+
+  // TODO: Like the song to the database (pass it the board object)
+  const likeSong = () => {
+    // Check if the user has already liked the song
+    const username = '';
+    console.log(username);
+    if (currSong?.likedUsers.includes(username)) {
+      setError('You have already liked this song!');
+      return;
+    }
+
+    // Update the database
+
+    // Update the user
+    setError('Song Liked!');
+  };
+
   return (
     <Container>
+      <div
+        id='lookupContainer'
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: '0.5em 0 0.5em 0',
+          borderTop: 'solid',
+          borderBottom: 'solid',
+          marginBottom: '1.0em',
+        }}>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '40%' }}>
+          <h3 id='song' style={{ width: '70%' }}>
+            Click on notes to make a song:{' '}
+          </h3>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25em' }}>
+          <div>
+            <label htmlFor='title'>
+              <b>Title: </b>
+            </label>
+            <input
+              type='text'
+              name='title'
+              id='title'
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
+              style={{ backgroundColor: '#bababa', minHeight: '100%' }}
+            />
+          </div>
+          <div>
+            <label htmlFor='description'>
+              <b>Description: </b>
+            </label>
+            <input
+              type='text'
+              name='description'
+              id='description'
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
+              style={{ backgroundColor: '#bababa', minHeight: '100%' }}
+            />
+          </div>
+        </div>
+      </div>
+      {error !== '' && (
+        <div id='error' style={{ marginBottom: '1em', justifySelf: 'center' }}>
+          {error}
+        </div>
+      )}
       <div
         ref={mixerRef}
         style={{
@@ -179,7 +397,44 @@ export default function MusicArea({
           gap: '10px',
         }}
       />
-      <button ref={playButton}>{playing ? 'STOP' : 'PLAY'}</button>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateRows: '1fr',
+          gridColumnGap: '0px',
+          gridRowGap: '0px',
+          marginTop: '10px',
+          height: '100%',
+        }}>
+        <button
+          id='saveBtn'
+          onClick={() => {
+            saveSong();
+          }}
+          style={{ padding: 'revert', backgroundColor: '#01c6d4' }}>
+          Save!
+        </button>
+        <button ref={playButton} style={{ padding: 'revert', backgroundColor: '#1ad401' }}>
+          {playing ? 'STOP' : 'PLAY'}
+        </button>
+        <button
+          id='toLookup'
+          onClick={() => {
+            checkIfEditsWereMade();
+          }}
+          style={{ padding: 'revert', backgroundColor: '#d4a301' }}>
+          Browse Other Songs
+        </button>
+        <button
+          id='likeBtn'
+          onClick={() => {
+            likeSong();
+          }}
+          style={{ padding: 'revert', backgroundColor: '#e4e176' }}>
+          LIKE
+        </button>
+      </div>
       <style>
         {`
           .note {
@@ -196,6 +451,15 @@ export default function MusicArea({
           }
         `}
       </style>
+      {/* <button onClick={() => {console.log(currSong)}}>currSong</button> */}
+      {/* <button
+        onClick={() => {
+          console.log(board);
+        }}>
+        board
+      </button> */}
+      {/* <button onClick={() => {console.log(boardDup)}}>boardDup</button>
+      <button onClick={() => {console.log(originalBoard)}}>originalBoard</button> */}
     </Container>
   );
 }
