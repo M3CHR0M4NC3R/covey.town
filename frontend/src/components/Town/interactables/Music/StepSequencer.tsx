@@ -146,6 +146,10 @@ export default function MusicArea({
   // The beats per minute is 120, using 16n as the timescale
   const configLoop = () => {
     const repeat = (time: number) => {
+      let beatMarker = document.getElementById(`beat-${beat}`);
+      if (beatMarker) {
+        beatMarker.style.backgroundColor = 'yellow';
+      }
       board.forEach((row, index) => {
         /* console.log(
           ' Beat: ' +
@@ -173,6 +177,10 @@ export default function MusicArea({
         }
       });
       beat = (beat + 1) % 16;
+      beatMarker = document.getElementById(`beat-${beat}`);
+      if (beatMarker) {
+        beatMarker.style.backgroundColor = '';
+      }
     };
     Tone.Transport.bpm.value = 120;
     Tone.Transport.scheduleRepeat(repeat, '16n');
@@ -198,6 +206,12 @@ export default function MusicArea({
       mixerRow.style.display = 'flex';
 
       row.forEach((note, noteIndex) => {
+        if (note.note === 'Cymbol' && noteIndex === 0) {
+          mixer.appendChild(document.createElement('br'));
+        }
+        if (note.note === 'Drum' && noteIndex === 0) {
+          mixer.appendChild(document.createElement('br'));
+        }
         const button = document.createElement('button');
         button.className = 'note';
         button.id = `note-${rowIndex}-${noteIndex}`;
@@ -207,6 +221,18 @@ export default function MusicArea({
       });
       mixer.appendChild(mixerRow);
     });
+    mixer.appendChild(document.createElement('br'));
+    const mixerRow = document.createElement('div');
+    mixerRow.className = `mixer-row-beatRow`;
+    mixerRow.style.display = 'flex';
+    for (let i = 0; i < 16; i++) {
+      const button = document.createElement('button');
+      button.className = 'note';
+      button.id = `beat-${i}`;
+      button.textContent = ``;
+      mixerRow.appendChild(button);
+    }
+    mixer.appendChild(mixerRow);
   };
 
   //Initializes the play button
