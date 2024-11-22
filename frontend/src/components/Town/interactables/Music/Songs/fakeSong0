@@ -2,4 +2,9 @@ creator: 'WWahr4TzizNmctFb-fW5F'
 description: 'Lorem, ipsum dolor.'
 likes: 0
 likedUsers: ['user1', 'user2']
-notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes6]
+false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false
+false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true
