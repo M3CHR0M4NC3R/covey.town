@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
 import { Song } from './MusicArea';
+import * as fs from 'fs/promises';
 
 export default function MusicArea({
   setRoute,
@@ -22,10 +23,16 @@ export default function MusicArea({
     /* TODO: Make database call to fetch the songs and load it into setSongs instead of the fakeSongs useEffect below*/
   }, []);
 
-  /* TODO: Delete this, this just loads fake data into songs, used for styling purposes */
-  /* notes is 1 array containing 6 inner arrays. Every inner array has 16 JSON objects with the objects being {note: note, playNote: true/false} */
   useEffect(() => {
+
+    // Load setSongs
+    loadInitialsongs();
+  }, []);
+
+  const loadInitialsongs = () => {
     const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
+    //TODO START OF FAKENOTES
+    //LINES BETWEEN HERE AND END SHOULD BE DELETED AFTER TESTING
     const fakeNotes0 = [
       { note: notes[0], playNote: false },
       { note: notes[0], playNote: false },
@@ -152,15 +159,65 @@ export default function MusicArea({
       { note: notes[5], playNote: true },
       { note: notes[5], playNote: true },
     ];
-    const fakeSong0 = {
-      title: 'Song title 0 (3words) - Lorem, ipsum dolor.',
-      creator: 'WWahr4TzizNmctFb-fW5F',
-      description: 'Lorem, ipsum dolor.',
+    // TODO END OF FAKENOTES
+
+    let fakeSong0: Song = {
+    //let fakeSong0: Song,fakeSong1,fakeSong2,fakeSong3,fakeSong4,fakeSong5 = {
+      title: 'blank',
+      creator: 'blank',
+      description: 'blank',
       likes: 0,
-      likedUsers: ['user1', 'user2'],
-      notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes6],
+      likedUsers: ['blank'],
+      notes:[fakeNotes0,fakeNotes0,fakeNotes0,fakeNotes0,fakeNotes0,fakeNotes0],
     };
-    const fakeSong1 = {
+    //fakeSong0 = loadSongFile("fakeSong0")
+    //songs shall be loaded/saved from the same string as their title
+    //or have the loader function open each file and check the title field
+    const fakeSongPath = './Music/fakeSong0';
+    //load song from that path into fakeSong0
+    fs.readFile(fakeSongPath, 'utf8', (err, data) => {
+      if (err) {
+          console.error('Error reading the file:', err);
+          return;
+      }
+      //parse here
+      const lines = data.split('\n').map(line => line.trim());
+      fakeSong0.title = lines[0];
+      fakeSong0.creator = lines[1];
+      fakeSong0.description = lines[2];
+      fakeSong0.likes = parseInt(lines[3]);
+      fakeSong0.likedUsers = lines[4].split(',');
+      //this loads an array of splitting the lines, parsed as booleans
+      fakeSong0.notes = [
+        lines[5].split(',').map(item => ({
+          note: notes[0],
+          playNote: item.trim() === 'true',
+        })),
+        lines[6].split(',').map(item => ({
+          note: notes[1],
+          playNote: item.trim() === 'true',
+        })),
+        lines[7].split(',').map(item => ({
+          note: notes[2],
+          playNote: item.trim() === 'true',
+        })),
+        lines[8].split(',').map(item => ({
+          note: notes[3],
+          playNote: item.trim() === 'true',
+        })),
+        lines[9].split(',').map(item => ({
+          note: notes[4],
+          playNote: item.trim() === 'true',
+        })),
+        lines[10].split(',').map(item => ({
+          note: notes[5],
+          playNote: item.trim() === 'true',
+        }))
+      ]
+    });
+    //TODO START FAKE SONG CONSTS
+    //LINES BETWEEN HERE AND END SHOULD BE DELETED AFTER TESTING
+    let fakeSong1 = {
       title: 'Song title 1 (5words) - Lorem ipsum dolor sit amet.',
       creator: 'WWahr4TzizNmctFb-fW5F',
       description: 'Lorem ipsum dolor sit amet.',
@@ -168,7 +225,7 @@ export default function MusicArea({
       likedUsers: ['user1', 'user2'],
       notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
-    const fakeSong2 = {
+    let fakeSong2 = {
       title:
         'Song title 2 (10words) - Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe, a.',
       creator: 'WWahr4TzizNmctFb-fW5F',
@@ -177,7 +234,7 @@ export default function MusicArea({
       likedUsers: ['user1', 'user2'],
       notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
-    const fakeSong3 = {
+    let fakeSong3 = {
       title:
         'Song title 3 (25 words) - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Soluta nobis molestiae totam dolor, quod blanditiis deserunt suscipit et. Voluptate alias ratione possimus rerum facilis consequuntur.',
       creator: 'WWahr4TzizNmctFb-fW5F',
@@ -187,7 +244,7 @@ export default function MusicArea({
       likedUsers: ['user1', 'user2'],
       notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
-    const fakeSong4 = {
+    let fakeSong4 = {
       title:
         'Song title 4 (50 words) - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex, sit. Fugit praesentium cum assumenda! Ea consequuntur delectus alias, sit nihil beatae quos eum minima culpa repellat est exercitationem cum a quae reiciendis itaque aliquam sequi porro animi dicta maiores impedit? Animi magnam adipisci fugit eaque. Nobis quidem ullam numquam harum.',
       creator: 'WWahr4TzizNmctFb-fW5F',
@@ -197,7 +254,7 @@ export default function MusicArea({
       likedUsers: ['user1', 'user2'],
       notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
-    const fakeSong5 = {
+    let fakeSong5 = {
       title:
         'Song title 5 (100 words) - Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aperiam sed ullam dolorum aut totam qui natus modi alias quisquam praesentium, error dolores, ab, a eligendi. Veritatis, natus facere, dignissimos cupiditate facilis voluptas aliquam minus temporibus laudantium rem blanditiis ut itaque, sunt officia? Enim et eius expedita nemo nobis! Earum iusto voluptate autem nulla rerum laborum facere amet porro eaque, exercitationem quo totam officia accusamus! Saepe doloremque quae beatae ipsum voluptates similique velit aspernatur veniam eum corporis architecto, eligendi eius harum quas corrupti quos placeat quam voluptatum cumque perspiciatis rerum vitae. Molestiae nesciunt incidunt nihil voluptatibus nam cum, consequuntur rerum minima?',
       creator: 'WWahr4TzizNmctFb-fW5F',
@@ -207,10 +264,9 @@ export default function MusicArea({
       likedUsers: ['user1', 'user2'],
       notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
     };
-
-    // Load setSongs
+    //TODO END FAKE SONG CONSTS
     setSongs([fakeSong0, fakeSong1, fakeSong2, fakeSong3, fakeSong4, fakeSong5]);
-  }, []);
+  }
 
   const handleKeyDown = (event: { key: string }) => {
     if (event.key === 'Enter') {
