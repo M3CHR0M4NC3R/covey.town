@@ -1,23 +1,15 @@
 import { mock } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
-import {
-  InteractableCommand,
-  TownEmitter,
-  GameInstanceID,
-  MusicGameState,
-  MusicMove,
-} from '../../types/CoveyTownSocket';
+import { InteractableCommand, TownEmitter } from '../../types/CoveyTownSocket';
 import { createPlayerForTesting } from '../../TestUtils';
 import {
   GAME_NOT_IN_PROGRESS_MESSAGE,
-  GAME_ID_MISSMATCH_MESSAGE,
   INVALID_COMMAND_MESSAGE,
 } from '../../lib/InvalidParametersError';
 import MusicGameArea from './MusicGameArea';
 import MusicGame from './MusicGame';
 import * as MusicGameModule from './MusicGame';
 import Player from '../../lib/Player';
-import Game from './Game';
 
 class TestingGame extends MusicGame {
   public constructor() {
