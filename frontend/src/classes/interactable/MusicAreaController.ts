@@ -50,8 +50,6 @@ export default class MusicAreaController extends GameAreaController<MusicGameSta
 
   get thisPlayer(): PlayerController | undefined {
     const thisPlayer = this._model.game?.state.id;
-    console.log('THISPLAYER');
-    console.log(thisPlayer);
     if (thisPlayer) {
       return this.occupants.find(eachOccupant => eachOccupant.id === thisPlayer);
     }
