@@ -15,12 +15,14 @@ export default function MusicArea({
   // setCurrSong,
   setRoute,
   currSong,
+  playerName,
 }: {
   interactableID: InteractableID;
   route: string;
   setRoute: React.Dispatch<React.SetStateAction<string>>;
   currSong: Song | null;
   setCurrSong: React.Dispatch<React.SetStateAction<Song | null>>;
+  playerName: string;
 }): JSX.Element {
   /*
     List of TODOS Referenced in this document:
@@ -46,7 +48,6 @@ export default function MusicArea({
   const [originalBoard, setOriginalBoard] = useState<
     { note: string; playNote: boolean }[][] | null
   >(null);
-  const [player, setPlayer] = useState('');
   const coveyTownController = useTownController();
   let beat = 0;
 
@@ -121,7 +122,6 @@ export default function MusicArea({
   /* Setup gameAreaController on load */
   useEffect(() => {
     if (!gameAreaController) return;
-    setPlayer(gameAreaController.x?.id || '');
     // setPlayers({
     //   X: gameAreaController.x?.userName || '(No player yet!)',
     //   O: gameAreaController.o?.userName || '(No player yet!)',
@@ -323,8 +323,7 @@ export default function MusicArea({
   // TODO: Like the song to the database (pass it the board object)
   const likeSong = () => {
     // Check if the user has already liked the song
-    const username = '';
-    console.log(username);
+    const username = playerName;
     if (currSong?.likedUsers.includes(username)) {
       setError('You have already liked this song!');
       return;

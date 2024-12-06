@@ -1,7 +1,7 @@
 /* Stripped version of ../TicTacToeAreaController.ts */
 import _ from 'lodash';
 import { GameArea, GameStatus, MusicGameState } from '../../types/CoveyTownSocket';
-import GameAreaController, { GameEventTypes } from './GameAreaController';
+import GameAreaController, { GameEventTypes, NO_GAME_STARTABLE } from './GameAreaController';
 import PlayerController from '../PlayerController';
 export type MusicEvents = GameEventTypes & {
   turnChanged: (isOurTurn: boolean) => void;
@@ -48,6 +48,16 @@ export default class MusicAreaController extends GameAreaController<MusicGameSta
     return undefined; //TODO
   }
 
+  get thisPlayer(): PlayerController | undefined {
+    const thisPlayer = this._model.game?.state.id;
+    console.log('THISPLAYER');
+    console.log(thisPlayer);
+    if (thisPlayer) {
+      return this.occupants.find(eachOccupant => eachOccupant.id === thisPlayer);
+    }
+    return undefined;
+  }
+
   /**
    * Updates the internal state of this TicTacToeAreaController to match the new model.
    *
@@ -62,5 +72,23 @@ export default class MusicAreaController extends GameAreaController<MusicGameSta
    */
   protected _updateFrom(newModel: GameArea<MusicGameState>): void {
     super._updateFrom(newModel);
+  }
+
+  /**
+   * Sends a request to the server to start the game.
+   *
+   * If the game is not in the WAITING_TO_START state, throws an error.
+   *
+   * @throws an error with message NO_GAME_STARTABLE if there is no game waiting to start
+   */
+  public async startGame(): Promise<void> {
+    const instanceID = this._instanceID;
+    if (!instanceID || this._model.game?.state.status !== 'WAITING_TO_START') {
+      throw new Error(NO_GAME_STARTABLE);
+    }
+    await this._townController.sendInteractableCommand(this.id, {
+      gameID: instanceID,
+      type: 'StartGame',
+    });
   }
 }

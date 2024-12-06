@@ -58,6 +58,8 @@ export default class ConnectFourAreaController extends GameAreaController<
    */
   get red(): PlayerController | undefined {
     const red = this._model.game?.state.red;
+    console.log('RED');
+    console.log(red);
     if (red) {
       return this.occupants.find(eachOccupant => eachOccupant.id === red);
     }

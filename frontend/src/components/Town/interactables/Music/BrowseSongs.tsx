@@ -1,21 +1,27 @@
-import { Container } from '@chakra-ui/react';
+import { Container, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
 import { Song } from './MusicArea';
+import MusicAreaController from '../../../../classes/interactable/MusicAreaController';
+import { useInteractableAreaController } from '../../../../classes/TownController';
 
 export default function MusicArea({
   setRoute,
   setCurrSong,
+  interactableID,
 }: {
   interactableID: InteractableID;
   route: string;
   setRoute: React.Dispatch<React.SetStateAction<string>>;
   currSong: Song | null;
   setCurrSong: React.Dispatch<React.SetStateAction<Song | null>>;
+  playerName: string;
 }): JSX.Element {
   const [songs, setSongs] = useState<Song[]>([]);
+  const toast = useToast();
   const coveyTownController = useTownController();
+  const gameAreaController = useInteractableAreaController<MusicAreaController>(interactableID);
 
   /* TODO: At load this should fetch info from the backend, and load setSongs for now it's just a temporary array of fake data */
   useEffect(() => {
