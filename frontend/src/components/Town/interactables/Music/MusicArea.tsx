@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import Sequencer from './StepSequencer';
 import BrowseSongs from './BrowseSongs';
+import useTownController from '../../../../hooks/useTownController';
 
 export interface Song {
   title: string;
@@ -20,6 +21,7 @@ export default function MusicArea({
 }): JSX.Element {
   const [route, setRoute] = useState('lookup');
   const [currSong, setCurrSong] = useState<Song | null>(null); // Song info that will be passed to StepSequencer if selected by user
+  const townController = useTownController();
 
   // UI Elements
   return (
@@ -31,6 +33,7 @@ export default function MusicArea({
           setRoute={setRoute}
           setCurrSong={setCurrSong}
           currSong={currSong}
+          playerName={townController.ourPlayer.userName}
         />
       )}
       {route == 'creation' && (
@@ -40,6 +43,7 @@ export default function MusicArea({
           setRoute={setRoute}
           setCurrSong={setCurrSong}
           currSong={currSong}
+          playerName={townController.ourPlayer.userName}
         />
       )}
       {/* <button id="toCreation" onClick={() => {setRoute('creation')}}>Click to go to Creation</button>
