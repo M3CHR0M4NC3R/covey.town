@@ -69,16 +69,13 @@ app.use(
 );
 
 // Connect to mongo db
-const DB_URI: string = process.env.MONGO_DB_URI || '';
-console.log(process.env.MONGO_DB_URI);
-console.log(DB_URI);
-
+const DB_URL: string = process.env.MONGO_DB_URL || '';
 mongoose
-  .connect(DB_URI)
+  .connect(DB_URL)
   .then(result => {
     // Listen for mongodb on port 4000
     // eslint-disable-next-line no-console
-    const port = 4000;
+    const port = process.env.MONGO_DB_PORT;
     app.listen(port);
     // eslint-disable-next-line no-console
     console.log('Connected to Mongo DB on port', port);
@@ -241,10 +238,10 @@ app.get('/add-song', (req, res) => {
     { note: notes[5], playNote: true },
   ];
   const fakeSong0 = {
-    title: 'Song title 0 (3words) - Lorem, ipsum dolor.2',
+    title: 'Song title 0 (3words) - Lorem, ipsum dolor.6',
     creator: 'WWahr4TzizNmctFb-fW5F',
     description: 'Lorem, ipsum dolor.',
-    likes: 0,
+    likes: 6,
     likedUsers: ['user1', 'user2'],
     notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes6],
   };
