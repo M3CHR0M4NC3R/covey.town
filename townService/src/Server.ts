@@ -2,10 +2,12 @@ import Express from 'express';
 import * as http from 'http';
 import CORS from 'cors';
 import { AddressInfo } from 'net';
+import mongoose from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
 import { ValidateError } from 'tsoa';
 import fs from 'fs/promises';
 import { Server as SocketServer } from 'socket.io';
+import Song from './models/song';
 import { RegisterRoutes } from '../generated/routes';
 import TownsStore from './lib/TownsStore';
 import { ClientToServerEvents, ServerToClientEvents } from './types/CoveyTownSocket';
@@ -66,12 +68,203 @@ app.use(
   },
 );
 
-// Start the configured server, defaulting to port 8081 if $PORT is not set
-server.listen(process.env.PORT || 8081, () => {
-  const address = server.address() as AddressInfo;
-  // eslint-disable-next-line no-console
-  console.log(`Listening on ${address.port}`);
-  if (process.env.DEMO_TOWN_ID) {
-    TownsStore.getInstance().createTown(process.env.DEMO_TOWN_ID, false);
-  }
+// Connect to mongo db
+const DB_URI: string = process.env.MONGO_DB_URI || '';
+console.log(process.env.MONGO_DB_URI);
+console.log(DB_URI);
+
+mongoose
+  .connect(DB_URI)
+  .then(result => {
+    // Listen for mongodb on port 4000
+    // eslint-disable-next-line no-console
+    const port = 4000;
+    app.listen(port);
+    // eslint-disable-next-line no-console
+    console.log('Connected to Mongo DB on port', port);
+  })
+  .then(result => {
+    // Start the configured server, defaulting to port 8081 if $PORT is not set
+    server.listen(process.env.PORT || 8081, () => {
+      const address = server.address() as AddressInfo;
+      // eslint-disable-next-line no-console
+      console.log(`Listening on ${address.port}`);
+      if (process.env.DEMO_TOWN_ID) {
+        TownsStore.getInstance().createTown(process.env.DEMO_TOWN_ID, false);
+      }
+    });
+  })
+  .catch(err => {
+    // eslint-disable-next-line no-console
+    console.log('Error connecting to mongo db:');
+    // eslint-disable-next-line no-console
+    console.log(err);
+  });
+
+// // Start the configured server, defaulting to port 8081 if $PORT is not set
+// server.listen(process.env.PORT || 8081, () => {
+//   const address = server.address() as AddressInfo;
+//   // eslint-disable-next-line no-console
+//   console.log(`Listening on ${address.port}`);
+//   if (process.env.DEMO_TOWN_ID) {
+//     TownsStore.getInstance().createTown(process.env.DEMO_TOWN_ID, false);
+//   }
+// });
+
+// mongoose and mongo sandbox routes
+app.get('/add-song', (req, res) => {
+  const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
+  const fakeNotes0 = [
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+    { note: notes[0], playNote: false },
+  ];
+  const fakeNotes1 = [
+    { note: notes[1], playNote: true },
+    { note: notes[1], playNote: true },
+    { note: notes[1], playNote: true },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+    { note: notes[1], playNote: false },
+  ];
+  const fakeNotes2 = [
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+    { note: notes[2], playNote: false },
+  ];
+  const fakeNotes3 = [
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+    { note: notes[3], playNote: false },
+  ];
+  const fakeNotes4 = [
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+    { note: notes[4], playNote: false },
+  ];
+  const fakeNotes5 = [
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+    { note: notes[5], playNote: false },
+  ];
+  const fakeNotes6 = [
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+    { note: notes[5], playNote: true },
+  ];
+  const fakeSong0 = {
+    title: 'Song title 0 (3words) - Lorem, ipsum dolor.2',
+    creator: 'WWahr4TzizNmctFb-fW5F',
+    description: 'Lorem, ipsum dolor.',
+    likes: 0,
+    likedUsers: ['user1', 'user2'],
+    notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes6],
+  };
+  const song = new Song(fakeSong0);
+  song
+    .save()
+    .then(result => {
+      res.send(result);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+
+app.get('/all-songs', (req, res) => {
+  Song.find()
+    .then(result => {
+      res.send(result);
+    })
+    .catch(error => {
+      console.log(error);
+    });
 });
