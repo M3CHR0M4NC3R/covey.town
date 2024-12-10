@@ -4,15 +4,13 @@ import useTownController from '../../../../hooks/useTownController';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import * as Tone from 'tone'; // Import Tone.js
 import { Song } from './MusicArea';
-import TownController, { useInteractableAreaController } from '../../../../classes/TownController';
-import PlayerController from '../../../../classes/PlayerController';
-import GameAreaController from '../../../../classes/interactable/GameAreaController';
+import { useInteractableAreaController } from '../../../../classes/TownController';
 import MusicAreaController from '../../../../classes/interactable/MusicAreaController';
 
 export default function MusicArea({
   interactableID,
   // route,
-  // setCurrSong,
+  setCurrSong,
   setRoute,
   currSong,
   playerName,
@@ -24,13 +22,6 @@ export default function MusicArea({
   setCurrSong: React.Dispatch<React.SetStateAction<Song | null>>;
   playerName: string;
 }): JSX.Element {
-  /*
-    List of TODOS Referenced in this document:
-    - TODO: Search the database for the title!
-    - Save the song to the database (pass it the board object)
-    Like the song to the database (pass it the board object)
-  */
-
   // UI Elements
   const mixerRef = useRef<HTMLDivElement>(null);
   const playButton = useRef<HTMLButtonElement>(null);
@@ -45,11 +36,17 @@ export default function MusicArea({
   const [started, setStarted] = useState(false);
   const [error, setError] = useState('');
   const [boardDup, setBoardDup] = useState(board);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [originalBoard, setOriginalBoard] = useState<
     { note: string; playNote: boolean }[][] | null
   >(null);
   const coveyTownController = useTownController();
   let beat = 0;
+
+  // Needed for post requests.
+  const customHeaders = {
+    'Content-Type': 'application/json',
+  };
 
   //Creates all the Synth Players 4 normal; 1 Drum; 1 Cymbol
   //Only want to create the players once to prevent the audio break after multiple starts and stops
@@ -92,7 +89,6 @@ export default function MusicArea({
         board.push(newRow);
       }
     }
-    // console.log(board);
   }
 
   /* Load board into boardDup so React can update things easier */
@@ -112,11 +108,17 @@ export default function MusicArea({
         }
       }
     }
+    // Auto fill in the title and description if available.
+    (document.getElementById('title') as HTMLInputElement).value = currSong?.title || '';
+    (document.getElementById('description') as HTMLInputElement).value =
+      currSong?.description || '';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardDup]);
 
   /* Create a board object that can be referenced for changes incase the user forgets to save their work */
   useEffect(() => {
     setOriginalBoard(JSON.parse(JSON.stringify(board)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* Setup gameAreaController on load */
@@ -241,6 +243,7 @@ export default function MusicArea({
       Tone.Transport.cancel();
       setKey(key + 1); // Update key to force remount
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
   useEffect(() => {
@@ -249,6 +252,7 @@ export default function MusicArea({
     } else {
       Tone.Transport.stop();
       Tone.Transport.cancel();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       beat = 0;
     }
   }, [playing]);
@@ -260,9 +264,7 @@ export default function MusicArea({
     if (error !== '') {
       setError('');
     }
-    if (event.key === 'Enter') {
-      console.log('TODO: Search the database for the title!');
-    } else {
+    if (event.key !== 'Enter') {
       coveyTownController.pause();
     }
   };
@@ -298,38 +300,84 @@ export default function MusicArea({
     //   // so they dont lose their work
     // } else {
     //   // Cleanup and transition
-    currSong = null;
+    setCurrSong(null);
     cleanBoard();
+    (document.getElementById('title') as HTMLInputElement).value = '';
+    (document.getElementById('description') as HTMLInputElement).value = '';
     setRoute('lookup');
     // }
   };
 
-  // TODO: Save the song to the database (pass it the board object)
   const saveSong = () => {
-    // Check if title and description are empty, if so then error message
-    const titleElement = document.getElementById('title') as HTMLInputElement;
-    const descriptionElement = document.getElementById('description') as HTMLInputElement;
-    if (titleElement.value.length === 0 || descriptionElement.value.length === 0) {
-      setError('Title or Description is empty!');
+    // Check if the user has access to edit this song
+    const username = playerName;
+
+    // Check if the user has already saved the song
+    const titleValue = (document.getElementById('title') as HTMLInputElement).value;
+    const descriptionValue = (document.getElementById('description') as HTMLInputElement).value;
+    if (titleValue === '') {
+      setError('Please enter a title!');
       return;
     }
 
+    // Update the database
+    const thisSong = {
+      title: titleValue,
+      creator: playerName,
+      description: descriptionValue,
+      likes: 0,
+      likedUsers: [],
+      notes: boardDup,
+    };
     // Save the song to the database
+    fetch(`http://localhost:4000/add-song`, {
+      method: 'POST',
+      headers: customHeaders,
+      body: JSON.stringify(thisSong),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Update the user
+        setError(data.status);
+      })
+      .catch(() => {
+        setError('Error saving song!');
+      });
 
     // Update the user
     setError('Song Saved!');
   };
 
-  // TODO: Like the song to the database (pass it the board object)
   const likeSong = () => {
+    const titleValue = (document.getElementById('title') as HTMLInputElement).value;
+    const descriptionValue = (document.getElementById('description') as HTMLInputElement).value;
     // Check if the user has already liked the song
     const username = playerName;
-    if (currSong?.likedUsers.includes(username)) {
-      setError('You have already liked this song!');
-      return;
-    }
 
-    // Update the database
+    // Update the database, checks for already likes done in backend.
+    const thisSong = {
+      title: titleValue,
+      creator: playerName,
+      description: descriptionValue,
+      likes: 0,
+      likedUsers: [],
+      notes: boardDup,
+      thisPlayer: username,
+    };
+    // Save the song to the database
+    fetch(`http://localhost:4000/like-song`, {
+      method: 'POST',
+      headers: customHeaders,
+      body: JSON.stringify(thisSong),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Update the user
+        setError(data.status);
+      })
+      .catch(() => {
+        setError('Error liking song!');
+      });
 
     // Update the user
     setError('Song Liked!');
@@ -450,15 +498,6 @@ export default function MusicArea({
           }
         `}
       </style>
-      {/* <button onClick={() => {console.log(currSong)}}>currSong</button> */}
-      {/* <button
-        onClick={() => {
-          console.log(board);
-        }}>
-        board
-      </button> */}
-      {/* <button onClick={() => {console.log(boardDup)}}>boardDup</button>
-      <button onClick={() => {console.log(originalBoard)}}>originalBoard</button> */}
     </Container>
   );
 }

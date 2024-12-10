@@ -1,4 +1,4 @@
-import { chakra, Container, useToast } from '@chakra-ui/react';
+import { chakra, Container } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import MusicAreaController from '../../../../classes/interactable/MusicAreaController';
 
