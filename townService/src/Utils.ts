@@ -16,6 +16,7 @@ export function logError(err: any): void {
 }
 
 // Check if song is valid
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isSongValid(song: any): boolean {
   const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
 
@@ -46,6 +47,7 @@ export function isSongValid(song: any): boolean {
 }
 
 // Iterate through every note and see if there's at least one note that's playing.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isSongNotesEmpty(song: any): boolean {
   for (let i = 0; i < song.notes.length; i++) {
     for (let j = 0; j < song.notes[i].length; j++) {

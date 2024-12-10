@@ -20,9 +20,7 @@ export default function MusicArea({
 }): JSX.Element {
   const [songs, setSongs] = useState<Song[]>([]);
   const [tempSongs, setTempSongs] = useState<Song[]>([]); // A backup to store songs for data manipulation to prevent multiple database calls
-  const toast = useToast();
   const coveyTownController = useTownController();
-  const gameAreaController = useInteractableAreaController<MusicAreaController>(interactableID);
 
   // Load songs from mongoDB to the songs state
   useEffect(() => {

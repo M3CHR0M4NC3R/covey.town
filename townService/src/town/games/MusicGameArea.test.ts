@@ -118,6 +118,7 @@ describe('MusicGameArea', () => {
     });
     describe('when given an invalid command', () => {
       it('should throw an error', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const command: InteractableCommand = { type: 'InvalidCommand' as any };
         expect(() => gameArea.handleCommand(command, player1)).toThrow(INVALID_COMMAND_MESSAGE);
       });

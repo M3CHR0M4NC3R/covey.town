@@ -1,5 +1,4 @@
 /* Stripped version of ../TicTacToeAreaController.ts */
-import _ from 'lodash';
 import { GameArea, GameStatus, MusicGameState } from '../../types/CoveyTownSocket';
 import GameAreaController, { GameEventTypes, NO_GAME_STARTABLE } from './GameAreaController';
 import PlayerController from '../PlayerController';

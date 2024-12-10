@@ -4,9 +4,7 @@ import useTownController from '../../../../hooks/useTownController';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import * as Tone from 'tone'; // Import Tone.js
 import { Song } from './MusicArea';
-import TownController, { useInteractableAreaController } from '../../../../classes/TownController';
-import PlayerController from '../../../../classes/PlayerController';
-import GameAreaController from '../../../../classes/interactable/GameAreaController';
+import { useInteractableAreaController } from '../../../../classes/TownController';
 import MusicAreaController from '../../../../classes/interactable/MusicAreaController';
 
 export default function MusicArea({
@@ -38,6 +36,7 @@ export default function MusicArea({
   const [started, setStarted] = useState(false);
   const [error, setError] = useState('');
   const [boardDup, setBoardDup] = useState(board);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [originalBoard, setOriginalBoard] = useState<
     { note: string; playNote: boolean }[][] | null
   >(null);
@@ -113,11 +112,13 @@ export default function MusicArea({
     (document.getElementById('title') as HTMLInputElement).value = currSong?.title || '';
     (document.getElementById('description') as HTMLInputElement).value =
       currSong?.description || '';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardDup]);
 
   /* Create a board object that can be referenced for changes incase the user forgets to save their work */
   useEffect(() => {
     setOriginalBoard(JSON.parse(JSON.stringify(board)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* Setup gameAreaController on load */
@@ -242,6 +243,7 @@ export default function MusicArea({
       Tone.Transport.cancel();
       setKey(key + 1); // Update key to force remount
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
   useEffect(() => {
@@ -250,6 +252,7 @@ export default function MusicArea({
     } else {
       Tone.Transport.stop();
       Tone.Transport.cancel();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       beat = 0;
     }
   }, [playing]);
@@ -337,7 +340,7 @@ export default function MusicArea({
         // Update the user
         setError(data.status);
       })
-      .catch(err => {
+      .catch(() => {
         setError('Error saving song!');
       });
 
@@ -372,7 +375,7 @@ export default function MusicArea({
         // Update the user
         setError(data.status);
       })
-      .catch(err => {
+      .catch(() => {
         setError('Error liking song!');
       });
 
