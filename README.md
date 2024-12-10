@@ -36,6 +36,8 @@ To create an account and configure your local environment:
 
 After configuring .env to have both `MONGO_DB_URL=mongodb+s...` and `MONGO_DB_PORT=4000` if you are receiving a mongo db error then go to /townService and run `npm install mongoose`
 
+Ensure that your npm is running on version 18.17.1, in terminal run `node -v`. If it is not then install nvm (node version manager) and perform the following commands `nvm install 18.17.1` `nvm use 18.17.1`
+
 ### Starting the backend
 
 Once your backend is configured, you can start it by running `npm start` in the `townService` directory (the first time you run it, you will also need to run `npm install`).
