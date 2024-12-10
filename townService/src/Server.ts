@@ -12,7 +12,7 @@ import { RegisterRoutes } from '../generated/routes';
 import TownsStore from './lib/TownsStore';
 import { ClientToServerEvents, ServerToClientEvents } from './types/CoveyTownSocket';
 import { TownsController } from './town/TownsController';
-import { logError } from './Utils';
+import { logError, isSongValid } from './Utils';
 
 // Create the server instances
 const app = Express();
@@ -68,6 +68,9 @@ app.use(
   },
 );
 
+// Middleware to reveal url encoded data on the response objects for Mongo db.
+app.use(Express.urlencoded({ extended: true }));
+
 // Connect to mongo db
 const DB_URL: string = process.env.MONGO_DB_URL || '';
 mongoose
@@ -98,161 +101,117 @@ mongoose
     console.log(err);
   });
 
-// // Start the configured server, defaulting to port 8081 if $PORT is not set
-// server.listen(process.env.PORT || 8081, () => {
-//   const address = server.address() as AddressInfo;
-//   // eslint-disable-next-line no-console
-//   console.log(`Listening on ${address.port}`);
-//   if (process.env.DEMO_TOWN_ID) {
-//     TownsStore.getInstance().createTown(process.env.DEMO_TOWN_ID, false);
-//   }
-// });
-
 // mongoose and mongo sandbox routes
-app.get('/add-song', (req, res) => {
-  const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
-  const fakeNotes0 = [
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-    { note: notes[0], playNote: false },
-  ];
-  const fakeNotes1 = [
-    { note: notes[1], playNote: true },
-    { note: notes[1], playNote: true },
-    { note: notes[1], playNote: true },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-    { note: notes[1], playNote: false },
-  ];
-  const fakeNotes2 = [
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-    { note: notes[2], playNote: false },
-  ];
-  const fakeNotes3 = [
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-    { note: notes[3], playNote: false },
-  ];
-  const fakeNotes4 = [
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-    { note: notes[4], playNote: false },
-  ];
-  const fakeNotes5 = [
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-    { note: notes[5], playNote: false },
-  ];
-  const fakeNotes6 = [
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-    { note: notes[5], playNote: true },
-  ];
-  const fakeSong0 = {
-    title: 'Song title 0 (3words) - Lorem, ipsum dolor.6',
-    creator: 'WWahr4TzizNmctFb-fW5F',
-    description: 'Lorem, ipsum dolor.',
-    likes: 6,
-    likedUsers: ['user1', 'user2'],
-    notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes6],
-  };
-  const song = new Song(fakeSong0);
-  song
-    .save()
+app.post('/add-song', (req, res) => {
+  const thisSong = req.body;
+
+  // Check if this song follows the correct song format
+  const isValid = isSongValid(thisSong);
+  let isCreator: boolean | null = null;
+  let isInDB: boolean | null = null;
+  if (!isValid) {
+    res.send({ isSuccessful: false, status: 'Invalid song format' });
+  }
+
+  // Check if song title exists in database
+  Song.findOne({ title: thisSong.title })
     .then(result => {
-      res.send(result);
+      if (result != null) {
+        isInDB = true;
+      }
+      if (result?.creator === thisSong.creator) {
+        isCreator = true;
+      } else {
+        isCreator = false;
+      }
+    })
+    .then(result => {
+      // Check if song should be put into database
+      if (isInDB === true && isCreator === true) {
+        // Update entry: edit the entry in database
+        Song.updateOne({ title: thisSong.title }, { $set: thisSong })
+          .then(resul => {
+            res.send({ isSuccessful: true, status: 'Song Updated!' });
+          })
+          .catch(error => {
+            res.send({ isSuccessful: false, status: 'Error updating song' });
+          });
+      } else if (isInDB === null) {
+        // New Entry: add the entry to the database
+        const song = new Song(thisSong);
+        song
+          .save()
+          .then(resu => {
+            res.send({ isSuccessful: true, status: 'Song Saved!' });
+          })
+          .catch(error => {
+            // eslint-disable-next-line no-console
+            console.log(error);
+            res.send({ isSuccessful: false, status: 'Error saving song' });
+          });
+      } else if (isInDB === true) {
+        res.send({ isSuccessful: false, status: 'Song already exists in the DB' });
+      } else {
+        res.send({ isSuccessful: false, status: 'Song not added' });
+      }
     })
     .catch(error => {
+      // eslint-disable-next-line no-console
       console.log(error);
+      res.send({ isSuccessful: false, status: 'Error adding song to DB' });
+    });
+});
+
+app.post('/like-song', (req, res) => {
+  const thisSong = req.body;
+  const username = thisSong.thisPlayer;
+
+  // Check if this song follows the correct song format
+  if (username === null || thisSong.title === null || thisSong.title.length === 0) {
+    res.send({ isSuccessful: false, status: 'Invalid song format' });
+    return;
+  }
+
+  // Check if user exists in the likedUsers array, if not add them
+  let songData: { likedUsers: string | any[] } | null = null;
+  Song.findOne({ title: thisSong.title })
+    .then(result => {
+      if (result === null) {
+        res.send({ isSuccessful: false, status: 'Song does not exist in DB' });
+      } else {
+        songData = result;
+      }
+    })
+    .then(result => {
+      const newSong = thisSong;
+      // Check if the user already liked this song, if so return
+      if (songData && songData.likedUsers.includes(username)) {
+        res.send({ isSuccessful: false, status: 'You already liked this song!' });
+        return;
+      }
+      if (!songData) {
+        res.send({ isSuccessful: false, status: 'Error liking song: Song data is null' });
+        return;
+      }
+      newSong.likedUsers = songData.likedUsers;
+      newSong.likedUsers.push(username);
+      newSong.likes = newSong.likedUsers.length;
+
+      // Update entry: edit the entry in database
+      Song.updateOne({ title: thisSong.title }, { $set: newSong })
+        .then(resul => {
+          res.send({ isSuccessful: true, status: 'Song Liked!' });
+        })
+        .catch(error => {
+          // eslint-disable-next-line no-console
+          console.log(error);
+          res.send({ isSuccessful: false, status: 'Error liking song' });
+        });
+    })
+    .catch(error => {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      res.send({ isSuccessful: false, status: 'Error liking song in DB' });
     });
 });
 
@@ -262,6 +221,7 @@ app.get('/all-songs', (req, res) => {
       res.send(result);
     })
     .catch(error => {
+      // eslint-disable-next-line no-console
       console.log(error);
     });
 });
