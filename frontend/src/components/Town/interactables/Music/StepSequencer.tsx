@@ -118,6 +118,7 @@ export default function MusicArea({
   /* Create a board object that can be referenced for changes incase the user forgets to save their work */
   useEffect(() => {
     setOriginalBoard(JSON.parse(JSON.stringify(board)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* Setup gameAreaController on load */
@@ -165,6 +166,7 @@ export default function MusicArea({
 
   //On note click it should flip the playNote status to either disable the sound or enable it
   //The button should visually change indicating the status via the active class
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleNoteClick = (clickedRowIndex: number, clickedNoteIndex: number, e: any) => {
     board[clickedRowIndex][clickedNoteIndex].playNote =
       !board[clickedRowIndex][clickedNoteIndex].playNote;
@@ -266,9 +268,6 @@ export default function MusicArea({
   };
 
   const saveSong = () => {
-    // Check if the user has access to edit this song
-    const username = playerName;
-
     // Check if the user has already saved the song
     const titleValue = (document.getElementById('title') as HTMLInputElement).value;
     const descriptionValue = (document.getElementById('description') as HTMLInputElement).value;

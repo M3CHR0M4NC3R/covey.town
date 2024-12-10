@@ -1,14 +1,13 @@
-import { Container, useToast } from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { InteractableID } from '../../../../types/CoveyTownSocket';
 import useTownController from '../../../../hooks/useTownController';
 import { Song } from './MusicArea';
-import MusicAreaController from '../../../../classes/interactable/MusicAreaController';
-import { useInteractableAreaController } from '../../../../classes/TownController';
 
 export default function MusicArea({
   setRoute,
   setCurrSong,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interactableID,
 }: {
   interactableID: InteractableID;
