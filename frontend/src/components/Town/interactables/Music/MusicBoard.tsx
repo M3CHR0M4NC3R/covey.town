@@ -47,7 +47,7 @@ export default function MusicBoard({ gameAreaController }: MusicGameProps): JSX.
   }, [gameAreaController]);
   return (
     <StyledMusicBoard aria-label='Music Board'>
-      <>can we see this {board}</>
+      <>{board}</>
     </StyledMusicBoard>
   );
 }
