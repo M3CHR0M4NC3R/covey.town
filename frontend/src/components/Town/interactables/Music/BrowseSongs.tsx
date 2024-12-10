@@ -19,208 +19,43 @@ export default function MusicArea({
   playerName: string;
 }): JSX.Element {
   const [songs, setSongs] = useState<Song[]>([]);
+  const [tempSongs, setTempSongs] = useState<Song[]>([]); // A backup to store songs for data manipulation to prevent multiple database calls
   const toast = useToast();
   const coveyTownController = useTownController();
   const gameAreaController = useInteractableAreaController<MusicAreaController>(interactableID);
 
-  /* TODO: At load this should fetch info from the backend, and load setSongs for now it's just a temporary array of fake data */
+  // Load songs from mongoDB to the songs state
   useEffect(() => {
-    /* TODO: Make database call to fetch the songs and load it into setSongs instead of the fakeSongs useEffect below*/
+    console.log('Fetching Mongo DB!');
+    fetch(`http://localhost:4000/all-songs`)
+      .then(response => response.json())
+      .then(data => {
+        setSongs(data);
+        setTempSongs(data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }, []);
 
-  /* TODO: Delete this, this just loads fake data into songs, used for styling purposes */
-  /* notes is 1 array containing 6 inner arrays. Every inner array has 16 JSON objects with the objects being {note: note, playNote: true/false} */
-  useEffect(() => {
-    const notes = ['F4', 'Eb4', 'C4', 'Bb3', 'Cymbol', 'Drum'];
-    const fakeNotes0 = [
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-      { note: notes[0], playNote: false },
-    ];
-    const fakeNotes1 = [
-      { note: notes[1], playNote: true },
-      { note: notes[1], playNote: true },
-      { note: notes[1], playNote: true },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-      { note: notes[1], playNote: false },
-    ];
-    const fakeNotes2 = [
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-      { note: notes[2], playNote: false },
-    ];
-    const fakeNotes3 = [
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-      { note: notes[3], playNote: false },
-    ];
-    const fakeNotes4 = [
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-      { note: notes[4], playNote: false },
-    ];
-    const fakeNotes5 = [
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-      { note: notes[5], playNote: false },
-    ];
-    const fakeNotes6 = [
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-      { note: notes[5], playNote: true },
-    ];
-    const fakeSong0 = {
-      title: 'Song title 0 (3words) - Lorem, ipsum dolor.',
-      creator: 'WWahr4TzizNmctFb-fW5F',
-      description: 'Lorem, ipsum dolor.',
-      likes: 0,
-      likedUsers: ['user1', 'user2'],
-      notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes6],
-    };
-    const fakeSong1 = {
-      title: 'Song title 1 (5words) - Lorem ipsum dolor sit amet.',
-      creator: 'WWahr4TzizNmctFb-fW5F',
-      description: 'Lorem ipsum dolor sit amet.',
-      likes: 0,
-      likedUsers: ['user1', 'user2'],
-      notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
-    };
-    const fakeSong2 = {
-      title:
-        'Song title 2 (10words) - Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe, a.',
-      creator: 'WWahr4TzizNmctFb-fW5F',
-      description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Saepe, a.',
-      likes: 0,
-      likedUsers: ['user1', 'user2'],
-      notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
-    };
-    const fakeSong3 = {
-      title:
-        'Song title 3 (25 words) - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Soluta nobis molestiae totam dolor, quod blanditiis deserunt suscipit et. Voluptate alias ratione possimus rerum facilis consequuntur.',
-      creator: 'WWahr4TzizNmctFb-fW5F',
-      description:
-        'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Soluta nobis molestiae totam dolor, quod blanditiis deserunt suscipit et. Voluptate alias ratione possimus rerum facilis consequuntur.',
-      likes: 0,
-      likedUsers: ['user1', 'user2'],
-      notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
-    };
-    const fakeSong4 = {
-      title:
-        'Song title 4 (50 words) - Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex, sit. Fugit praesentium cum assumenda! Ea consequuntur delectus alias, sit nihil beatae quos eum minima culpa repellat est exercitationem cum a quae reiciendis itaque aliquam sequi porro animi dicta maiores impedit? Animi magnam adipisci fugit eaque. Nobis quidem ullam numquam harum.',
-      creator: 'WWahr4TzizNmctFb-fW5F',
-      description:
-        'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ex, sit. Fugit praesentium cum assumenda! Ea consequuntur delectus alias, sit nihil beatae quos eum minima culpa repellat est exercitationem cum a quae reiciendis itaque aliquam sequi porro animi dicta maiores impedit? Animi magnam adipisci fugit eaque. Nobis quidem ullam numquam harum.',
-      likes: 0,
-      likedUsers: ['user1', 'user2'],
-      notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
-    };
-    const fakeSong5 = {
-      title:
-        'Song title 5 (100 words) - Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aperiam sed ullam dolorum aut totam qui natus modi alias quisquam praesentium, error dolores, ab, a eligendi. Veritatis, natus facere, dignissimos cupiditate facilis voluptas aliquam minus temporibus laudantium rem blanditiis ut itaque, sunt officia? Enim et eius expedita nemo nobis! Earum iusto voluptate autem nulla rerum laborum facere amet porro eaque, exercitationem quo totam officia accusamus! Saepe doloremque quae beatae ipsum voluptates similique velit aspernatur veniam eum corporis architecto, eligendi eius harum quas corrupti quos placeat quam voluptatum cumque perspiciatis rerum vitae. Molestiae nesciunt incidunt nihil voluptatibus nam cum, consequuntur rerum minima?',
-      creator: 'WWahr4TzizNmctFb-fW5F',
-      description:
-        'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aperiam sed ullam dolorum aut totam qui natus modi alias quisquam praesentium, error dolores, ab, a eligendi. Veritatis, natus facere, dignissimos cupiditate facilis voluptas aliquam minus temporibus laudantium rem blanditiis ut itaque, sunt officia? Enim et eius expedita nemo nobis! Earum iusto voluptate autem nulla rerum laborum facere amet porro eaque, exercitationem quo totam officia accusamus! Saepe doloremque quae beatae ipsum voluptates similique velit aspernatur veniam eum corporis architecto, eligendi eius harum quas corrupti quos placeat quam voluptatum cumque perspiciatis rerum vitae. Molestiae nesciunt incidunt nihil voluptatibus nam cum, consequuntur rerum minima?',
-      likes: 0,
-      likedUsers: ['user1', 'user2'],
-      notes: [fakeNotes0, fakeNotes1, fakeNotes2, fakeNotes3, fakeNotes4, fakeNotes5],
-    };
-
-    // Load setSongs
-    setSongs([fakeSong0, fakeSong1, fakeSong2, fakeSong3, fakeSong4, fakeSong5]);
-  }, []);
+  // Filter the main songs array based on the search input
+  const filterSongs = (search: string) => {
+    if (search === '') {
+      setSongs(tempSongs);
+    } else {
+      const filteredSongs = songs.filter(song => {
+        return (
+          song.title.toLowerCase().includes(search.toLowerCase()) ||
+          song.creator.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+      setSongs(filteredSongs);
+    }
+  };
 
   const handleKeyDown = (event: { key: string }) => {
     if (event.key === 'Enter') {
-      console.log('TODO: Search the database for the title!');
+      filterSongs(document.getElementById('song').value);
     } else {
       coveyTownController.pause();
     }
@@ -274,7 +109,7 @@ export default function MusicArea({
             type='submit'
             typeof='name'
             onClick={() => {
-              console.log('TODO: Search the database for the title!');
+              filterSongs(document.getElementById('song').value);
             }}
             style={{ padding: 'revert', backgroundColor: '#bcebb6' }}>
             Search!
@@ -307,7 +142,6 @@ export default function MusicArea({
               id={`btnView-${index}`}
               className='btnView'
               onClick={() => {
-                console.log(song);
                 setCurrSong(song);
                 setRoute('creation');
               }}
