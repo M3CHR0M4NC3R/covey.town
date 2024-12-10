@@ -118,16 +118,11 @@ export default function MusicArea({
   /* Create a board object that can be referenced for changes incase the user forgets to save their work */
   useEffect(() => {
     setOriginalBoard(JSON.parse(JSON.stringify(board)));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* Setup gameAreaController on load */
   useEffect(() => {
     if (!gameAreaController) return;
-    // setPlayers({
-    //   X: gameAreaController.x?.userName || '(No player yet!)',
-    //   O: gameAreaController.o?.userName || '(No player yet!)',
-    // });
   }, [gameAreaController, coveyTownController.ourPlayer.id]);
 
   const cleanBoard = () => {
@@ -149,18 +144,6 @@ export default function MusicArea({
   const configLoop = () => {
     const repeat = (time: number) => {
       board.forEach((row, index) => {
-        /* console.log(
-          ' Beat: ' +
-            beat +
-            ' index: ' +
-            index +
-            ' SYNTH: ' +
-            synthObjArray[index] +
-            ' SoundNOTE: ' +
-            row[beat].note +
-            ' SoundStatus: ' +
-            row[beat].playNote,
-        ); */
         const synth = synthPlayerArray.current[index];
         const sound = row[beat];
         if (sound.playNote) {
@@ -226,7 +209,6 @@ export default function MusicArea({
         Tone.getDestination().volume.rampTo(-10, 0.001);
         configLoop();
         setStarted(true);
-        //console.log('STARTED !LEAVING! LISTENER: ' + started);
       }
 
       setPlaying(prevPlaying => !prevPlaying);
@@ -235,7 +217,6 @@ export default function MusicArea({
 
   //Upon activation create the mixerboard and ready the Tone.js loop
   useEffect(() => {
-    //console.log('REMOUNT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     makeInteractableMixer();
     configPlayButton();
     return () => {
@@ -274,32 +255,8 @@ export default function MusicArea({
     coveyTownController.unPause();
   };
 
-  // Helper function to compare arrays
-  // function arraysEqual(a: any, b: any) {
-  //   if (a.length !== b.length) {
-  //     return false;
-  //   }
-
-  //   for (let i = 0; i < a.length; ++i) {
-  //     for (let j = 0; j < a[i].length; ++j) {
-  //       if (a[i][j].note !== b[i][j].note || a[i][j].playNote !== b[i][j].playNote) {
-  //         return false;
-  //       }
-  //     }
-  //   }
-
-  //   return true;
-  // }
-
   /* Maybe they can press again to just continue without saving? */
   const checkIfEditsWereMade = () => {
-    // if (arraysEqual(originalBoard, board) === false) {
-    //   // Compare the arrays currSong (from lookup) and board. If they are not the same then prompt the user to save so they dont lose their work
-    //   setError('You have unsaved changes. Would you like to save before leaving?');
-    //   // Check if changes were made by comparing the arrays currSong and board. If they are not the same then prompt the user to save
-    //   // so they dont lose their work
-    // } else {
-    //   // Cleanup and transition
     setCurrSong(null);
     cleanBoard();
     (document.getElementById('title') as HTMLInputElement).value = '';

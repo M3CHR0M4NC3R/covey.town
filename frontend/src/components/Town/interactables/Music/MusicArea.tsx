@@ -46,8 +46,6 @@ export default function MusicArea({
           playerName={townController.ourPlayer.userName}
         />
       )}
-      {/* <button id="toCreation" onClick={() => {setRoute('creation')}}>Click to go to Creation</button>
-      <button id="toLookup" onClick={() => {setRoute('lookup')}}>Click to go to Lookup</button> */}
     </Container>
   );
 }
