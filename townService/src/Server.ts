@@ -182,15 +182,22 @@ app.post('/like-song', (req, res) => {
   // Check if user exists in the likedUsers array, if not add them
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let songData: any = null;
+  let doesSongExist: boolean | null = null;
   Song.findOne({ title: thisSong.title })
     .then(result => {
       if (result === null) {
         res.send({ isSuccessful: false, status: 'Song does not exist in DB' });
-      } else {
-        songData = result;
+        doesSongExist = false;
+        return;
       }
+      songData = result;
     })
     .then(result => {
+      // If song does not exist then a res object was sent already. Prevent a 2nd one.
+      if (doesSongExist === false) {
+        return;
+      }
+
       const newSong = songData;
       // Check if the user already liked this song, if so return
       if (songData && songData.likedUsers.includes(username)) {
