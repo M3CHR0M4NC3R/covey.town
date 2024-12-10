@@ -173,7 +173,8 @@ app.post('/like-song', (req, res) => {
   }
 
   // Check if user exists in the likedUsers array, if not add them
-  let songData: { likedUsers: string | any[] } | null = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let songData: any = null;
   Song.findOne({ title: thisSong.title })
     .then(result => {
       if (result === null) {
@@ -183,7 +184,7 @@ app.post('/like-song', (req, res) => {
       }
     })
     .then(result => {
-      const newSong = thisSong;
+      const newSong = songData;
       // Check if the user already liked this song, if so return
       if (songData && songData.likedUsers.includes(username)) {
         res.send({ isSuccessful: false, status: 'You already liked this song!' });
@@ -193,9 +194,10 @@ app.post('/like-song', (req, res) => {
         res.send({ isSuccessful: false, status: 'Error liking song: Song data is null' });
         return;
       }
-      newSong.likedUsers = songData.likedUsers;
-      newSong.likedUsers.push(username);
-      newSong.likes = newSong.likedUsers.length;
+      if (newSong) {
+        newSong.likedUsers.push(username);
+        newSong.likes = newSong.likedUsers.length;
+      }
 
       // Update entry: edit the entry in database
       Song.updateOne({ title: thisSong.title }, { $set: newSong })
