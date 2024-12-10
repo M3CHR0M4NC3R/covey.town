@@ -12,7 +12,7 @@ import { RegisterRoutes } from '../generated/routes';
 import TownsStore from './lib/TownsStore';
 import { ClientToServerEvents, ServerToClientEvents } from './types/CoveyTownSocket';
 import { TownsController } from './town/TownsController';
-import { logError, isSongValid } from './Utils';
+import { logError, isSongValid, isSongNotesEmpty } from './Utils';
 
 // Create the server instances
 const app = Express();
@@ -111,6 +111,13 @@ app.post('/add-song', (req, res) => {
   let isInDB: boolean | null = null;
   if (!isValid) {
     res.send({ isSuccessful: false, status: 'Invalid song format' });
+    return;
+  }
+
+  const isEmpty = isSongNotesEmpty(thisSong);
+  if (isEmpty === true) {
+    res.send({ isSuccessful: false, status: 'Song notes are empty' });
+    return;
   }
 
   // Check if song title exists in database

@@ -308,10 +308,6 @@ export default function MusicArea({
   const saveSong = () => {
     // Check if the user has access to edit this song
     const username = playerName;
-    if (currSong?.creator !== username) {
-      setError('This is not your song!');
-      return;
-    }
 
     // Check if the user has already saved the song
     const titleValue = (document.getElementById('title') as HTMLInputElement).value;

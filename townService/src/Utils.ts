@@ -44,3 +44,15 @@ export function isSongValid(song: any): boolean {
 
   return true;
 }
+
+// Iterate through every note and see if there's at least one note that's playing.
+export function isSongNotesEmpty(song: any): boolean {
+  for (let i = 0; i < song.notes.length; i++) {
+    for (let j = 0; j < song.notes[i].length; j++) {
+      if (song.notes[i][j].playNote === true) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
