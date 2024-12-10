@@ -25,12 +25,16 @@ To create an account and configure your local environment:
 2. Create an API key and secret (select "API Keys" on the left under "Settings")
 3. Create a `.env` file in the `townService` directory, setting the values as follows:
 
-| Config Value            | Description                               |
-| ----------------------- | ----------------------------------------- |
-| `TWILIO_ACCOUNT_SID`    | Visible on your twilio account dashboard. |
-| `TWILIO_API_KEY_SID`    | The SID of the new API key you created.   |
-| `TWILIO_API_KEY_SECRET` | The secret for the API key you created.   |
-| `TWILIO_API_AUTH_TOKEN` | Visible on your twilio account dashboard. |
+| Config Value            | Description                                    |
+| ----------------------- | ---------------------------------------------- |
+| `TWILIO_ACCOUNT_SID`    | Visible on your twilio account dashboard.      |
+| `TWILIO_API_KEY_SID`    | The SID of the new API key you created.        |
+| `TWILIO_API_KEY_SECRET` | The secret for the API key you created.        |
+| `TWILIO_API_AUTH_TOKEN` | Visible on your twilio account dashboard.      |
+| `MONGO_DB_URL`          | Mongo db cluster (Provided in canvas comments) |
+| `MONGO_DB_PORT`         | Port that mongodb will listen on (4000)        |
+
+After configuring .env to have both `MONGO_DB_URL=mongodb+s...` and `MONGO_DB_PORT=4000` if you are receiving a mongo db error then go to /townService and run `npm install mongoose`
 
 ### Starting the backend
 
