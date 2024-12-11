@@ -105,7 +105,6 @@ describe('[T1] TicTacToeAreaController', () => {
         });
         expect(controller.isPlayer).toBe(false);
       });
-      //test for get status()
       it('should return false when there is a different player connected', () => {
         const controller1 = MusicAreaControllerWithProp({
           status: 'IN_PROGRESS',
@@ -119,6 +118,7 @@ describe('[T1] TicTacToeAreaController', () => {
         expect(controller2.isPlayer).toBe(false);
       });
     });
+    //test for get status()
     describe('status', () => {
       it("should return 'WAITING_TO_START' when status is as such, or unknown", () => {
         const controller1 = MusicAreaControllerWithProp({
@@ -131,6 +131,56 @@ describe('[T1] TicTacToeAreaController', () => {
           x: ourPlayer.id,
         });
         expect(controller2.status).toBe('WAITING_TO_START');
+        const controller3 = MusicAreaControllerWithProp({
+          status: 'OVER',
+          x: undefined,
+        });
+        expect(controller3.status).toBe('OVER');
+      });
+    });
+    describe('isActive', () => {
+      it('should return true so long as someone is using the game', () => {
+        const controller = MusicAreaControllerWithProp({
+          status: 'IN_PROGRESS',
+          x: ourPlayer.id,
+        });
+        expect(controller.isActive()).toBe(true);
+        const controller1 = MusicAreaControllerWithProp({
+          status: 'WAITING_TO_START',
+          x: ourPlayer.id,
+        });
+        expect(controller1.isActive()).toBe(true);
+      });
+      it('should return false when the game is empty', () => {
+        const controller = MusicAreaControllerWithProp({
+          status: 'OVER',
+          x: otherPlayers[0].id,
+        });
+        expect(controller.isActive()).toBe(false);
+      });
+    });
+    describe('get x', () => {
+      it('should return the player that is in the game', () => {
+        const controller1 = MusicAreaControllerWithProp({
+          status: 'IN_PROGRESS',
+          x: ourPlayer.id,
+        });
+        const controller2 = MusicAreaControllerWithProp({
+          status: 'IN_PROGRESS',
+          x: otherPlayers[0].id,
+        });
+        const controller3 = MusicAreaControllerWithProp({
+          status: 'IN_PROGRESS',
+          x: otherPlayers[1].id,
+        });
+        const controller4 = MusicAreaControllerWithProp({
+          status: 'IN_PROGRESS',
+          x: undefined,
+        });
+        expect(controller1.x).toBe(ourPlayer);
+        expect(controller2.x).toBe(otherPlayers[0]);
+        expect(controller3.x).toBe(otherPlayers[1]);
+        expect(controller4.x).toBe(undefined);
       });
     });
   });
