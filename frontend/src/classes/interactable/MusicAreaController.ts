@@ -39,7 +39,7 @@ export default class MusicAreaController extends GameAreaController<MusicGameSta
   get x(): PlayerController | undefined {
     const currentGame = this._model.game;
 
-    // check if game is active and x exists, if so ereturn the value from the controller
+    // check if game is active and x exists, if so return the value from the controller
     if (currentGame && currentGame.state.id) {
       return this._townController.getPlayer(currentGame.state.id);
     }
